@@ -1,0 +1,92 @@
+.sidebar {
+    display: flex;
+    padding: 20px 0px 10px 10px;
+    height: 100%;
+    flex: 0.5;
+    max-width: 200px;
+    border-right: 1px solid #ddd;
+    /* background-color: aqua;  */
+}
+
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 10px 0px;  
+    /* background-color: yellow;  */
+}
+
+.sidebar-options {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 10px 0px;
+    font-size: 14px;
+    /* background-color: blue; */
+}
+
+a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.7); /* Slightly darker text */
+    padding: 5px 10px;
+    margin: 0px 0px;
+}
+
+a:hover {
+    color: #000;
+    /* background-color: #e9ecef; */
+    border-radius: 4px;
+}
+
+.sidebar-options > p {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+    margin-bottom: 5px;
+    padding-left: 10px;
+    /* background-color: antiquewhite; */
+}
+
+.Link {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: 0px;
+    /* background: red; */
+}
+
+.Link-tag {
+    display: flex;
+    align-items: center;
+    margin: 5px 0px 5px 5px;
+    padding: 5px;
+    /* background-color: aqua; */
+}
+
+.Link-tag:hover {
+    border-right: 5px solid rgb(95, 235, 245);
+    /* background-color: #f1f1f1;  */
+    border-radius: 2px
+}
+
+.Link-tag > .MuiSvgIcon-root {
+    font-size: 18px;
+    margin-right: 5px;
+    color: skyblue;
+}
+
+.tag {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.tag > p {
+    margin: 0px 0px;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.tag > p:hover {
+    color: blue;
+    text-decoration: underline;
+}

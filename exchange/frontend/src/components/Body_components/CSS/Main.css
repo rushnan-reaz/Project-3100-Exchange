@@ -1,0 +1,134 @@
+.main {
+    display: flex;
+    padding: 30px 10px;
+    flex: 0.75;
+    flex-direction: column;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    /*padding: 10px;*/
+    width: 100%;
+}
+.main-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 10px;
+    /*border-bottom: 1px solid #e0e0e0;*/
+    width: 100%;
+    /*background-color: royalblue;*/
+    align-items: center;
+}
+
+.main-top > h2 {
+    font-size: 25px;
+    font-weight: 400;
+    color: rgba(0,0,0,0.8);
+    /*background-color: aquamarine;*/
+}
+
+.main-top button {
+    background-color: #0095ff;
+    padding: 10px;
+    border: 2px solid #007cd446 ;
+    color: #fff;
+    outline: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.main-top button:hover {
+    scale: 1.02;
+}
+
+.main-dec{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 20px;
+    margin-bottom: 10px;
+    color: rgba(0,0,0,0.8);
+    width: 100%;
+    /*background-color: aqua;*/
+}
+
+.main-filter{
+    display: flex;
+    align-items: center;
+}
+
+.main-tabs{
+    display: flex;
+    margin-right: 50px;
+    border: 1px solid rgba(0,0,0,0.4);
+    border-radius: 2px;
+    padding: 0 5px 0 0;
+    /*background-color: #007cd446;*/
+    align-items: center;
+
+}
+
+.main-tab{
+    padding: 5px;
+    text-decoration: none;
+    /*background-color: antiquewhite;*/
+}
+
+
+.main-filter-item{
+    display: flex;
+    padding:0 5px 0 0;
+    border: 1px solid #0095ff;
+    border-radius: 4px;
+    background-color: #007cd446;
+    font-size: small;
+    align-items: center;
+    color: #007cd4;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.main-filter-item:hover{
+    scale: 1.02;
+}
+
+
+.questions{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /*background-color: blue;*/
+}
+
+.question{
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+    width: 100%;
+    /*background-color: red;*/
+}
+
+
+.main-tabs a {
+    text-decoration: none; /* Removes underline */
+    color: rgba(0,0,0, 0.4); /* Sets the color */
+}
+
+.main-tabs a:hover {
+    color: black;
+    cursor: pointer;
+}
+
+
+
+@media screen and (min-width: 768px) {
+    .main {
+        flex: 0.6;
+    }
+
+}

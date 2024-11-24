@@ -1,0 +1,114 @@
+/* Container for each question */
+.all-q {
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px 0;
+    /*background-color: #f9f9f9; /* background color */
+}
+
+/*!* Flexbox for left stats and right content *!*/
+.all-q-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    /*background-color: white;
+    padding: 20px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* shadow */
+    /*border-radius: 8px;*/
+    /*margin-bottom: 20px; !* spacing between question blocks *!*/
+}
+
+/* Styling for the left stats (votes, answers, visitors) */
+.all-q-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-right: 30px;
+    /*background-color: blue;
+    color: #333; /* Neutral text color */
+}
+
+
+.all-options{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+    color: rgba(0,0,0,0.6);
+    font-size: small;
+}
+/* Styling for the individual stat option*/
+.all-option{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.all-option p{
+    font-size: large;
+}
+
+/* Styling for the question-answer box*/
+.que-ans {
+    display: flex;
+    flex-direction: column;
+    /*flex: 1;*/
+    width: 100%;
+    justify-content: space-between;
+    /*background-color: green;*/
+}
+
+/* Styling question title */
+.que-ans a {
+    font-size: 1.1em;
+    text-decoration: none;
+    color: #0151f0d8;
+    margin-bottom: 10px;
+    /*background-color: antiquewhite;*/
+    display: inline-block; /* Ensure it behaves like a block element for proper styling */
+    padding: 0 5px 5px 0; /* Remove any padding */
+}
+
+.que-ans a:hover {
+    text-decoration: none;
+    color: #022772d8;
+}
+
+/* Styling tags */
+.tags {
+    background-color: #0151f03d;
+    color: rgba(0,0,0,0.7);
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 10px 5px;
+    font-size: small;
+}
+
+/* Author information */
+.author {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: auto;
+}
+.author small{
+    color: rgba(0,0,0,0.7);
+    margin-bottom: 5px;
+}
+/* Author info with avatar */
+.author-info {
+    display: flex;
+    align-items: center;
+}
+
+.author-info p {
+    margin-left: 10px;
+    color: #007cd4;
+    font-size: small;
+}
