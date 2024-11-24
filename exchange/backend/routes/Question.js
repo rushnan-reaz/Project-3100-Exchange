@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 
 const QuestionDB = require("../models/Question");
 
+router.get('/question', (req, res) => {
+  res.json({ message: 'This is the question route' });
+});
+
 router.post("/", async (req, res) => {
   try {
     // Create a new QuestionDB object

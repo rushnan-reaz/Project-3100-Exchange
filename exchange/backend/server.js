@@ -1,45 +1,47 @@
 const express = require('express');
-const cors = require('cors');   
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const db = require("../db");
-const router = require('../routes'); 
+const db = require("./db"); // Database connection
+const apirouter = require('./routes'); // Import API routes
 
 const app = express();
 const port = process.env.PORT || 8000;
 
-// DB connection
+// Connect to the database
 db.connect();
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json());  // Handle JSON body data
 app.use(express.json());
 
-// Headers
+// Logging middleware (optional but useful for debugging)
+app.use((req, res, next) => {
+    console.log(`Request received: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
+// Set headers for all routes (CORS)
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next(); // Add this to continue the middleware chain
+    next();
 });
 
-// API routes
-app.use('/api', router);
+// API Routes
+app.use('/api', apirouter);
 
-// Static files
+// Serve static files for React
 app.use('/upload', express.static(path.join(__dirname, '/../upload')));
 app.use(express.static(path.join(__dirname, '/../frontend/build')));
 
+// Catch-all route for React frontend (serve index.html for all other routes)
 app.get('*', (req, res) => {
-    try {
-        res.sendFile(path.join(__dirname + '/../frontend/build/index.html'));
-    } catch (err) {
-        res.send('Error in loading file');
-    }
+    res.sendFile(path.join(__dirname, '/../frontend/build/index.html'));
 });
 
-// Server start
+// Start the server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);   
+    console.log(`Server is running on port ${port}`);
 });

@@ -1,19 +1,26 @@
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-require('dotenv').config(); // Load environment variables
 
-const url = "mongodb+srv://rushnan01:GEsOrMY0UmecFyc9@exchange1.fecvq.mongodb.net/?retryWrites=true&w=majority&appName=exchange1";
+dotenv.config(); // Load environment variables
 
-
-console.log("MongoDB URI:", url); 
+const url = process.env.MONGO_URI;
 
 const connect = async () => {
     try {
-        if (!url) throw new Error("Database connection URL is undefined");
-        await mongoose.connect(url); // Connect to MongoDB
-        console.log('Connected to database');
+        if (!url) {
+            throw new Error("Database connection URL is undefined. Please check your .env file or environment variables.");
+        }
+        await mongoose.connect(url, {
+            // useNewUrlParser: true,
+            // useUnifiedTopology: true,
+        });
+        console.log('Connected to database successfully');
     } catch (error) {
-        console.error('Database connection failed:', error);
+        console.error('Database connection failed:', error.message);
+        process.exit(1); // Exit the process to avoid running a broken app
     }
 };
+
+console.log("MongoDB URI:", url); // Debug the URI being loaded
 
 module.exports = { connect };
