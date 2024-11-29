@@ -5,7 +5,7 @@ const AnswerSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Question',
     },
-    Answer: {
+    answer: {
         type: String,
         required: true,
     },
@@ -15,7 +15,10 @@ const AnswerSchema = new mongoose.Schema({
         default: Date.now,
     },
 
-    user: Object,
+    user: {
+        type: Object,
+        required: false,},
+
     comment_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',

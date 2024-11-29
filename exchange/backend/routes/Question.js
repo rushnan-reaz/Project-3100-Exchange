@@ -4,9 +4,9 @@ const mongoose = require("mongoose");
 
 const QuestionDB = require("../models/Question");
 
-router.get('/question', (req, res) => {
-  res.json({ message: 'This is the question route' });
-});
+// router.get('/', (req, res) => {
+//   res.json({ message: 'This is the question route' });
+// });
 
 router.post("/", async (req, res) => {
   try {
@@ -19,14 +19,19 @@ router.post("/", async (req, res) => {
     });
 
     // Save the data to the database
-    const savedData = await questiondata.save();
+    await questiondata.save().then((doc) => {
+      res.status(201).json({ status: true, data: doc});
+    });
 
-    // Respond with the saved data
-    res.status(201).json({ status: true, data: savedData });
   } catch (error) {
     // Handle errors
-    res.status(500).json({ status: false, message: "Error adding question" });
+    res.status(404).json({ status: false, message: "Error adding question" });
   }
 });
+
+router.get("/", async (req, res) => {
+.Aggregate
+
+
 
 module.exports = router; 
