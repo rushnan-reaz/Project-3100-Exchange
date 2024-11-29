@@ -98,11 +98,11 @@ function Index() {
           <div onClick={handleGoogleSignIN} className="single-option">
             <img
               alt="google"
-              src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Google_%22G%22_Logo.svg"
+              src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
             />
             <p>{loading ? "Signing in..." : "Login with Google"}</p>
           </div>
-          <div className="single-option">
+          {/* <div className="single-option">
             <img
               alt="github"
               src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
@@ -115,7 +115,7 @@ function Index() {
               src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
             />
             <p>Login with Facebook</p>
-          </div>
+          </div> */}
         </div>
 
         <div className="auth-login">
