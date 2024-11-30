@@ -15,10 +15,6 @@ const UserSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    required: [true, 'Department is required']
-  },
-  department: {
-    type: String,
     required: [true, 'Department is required'],
     enum: {
       values: ['CSE', 'EEE', 'ETE', 'ECE'],
