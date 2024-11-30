@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth, registerUser, loginUser } from '../../firebase';
+import { auth, registerUser, loginUser } from '../../../firebase';
 
 
 const LoginPage = () => {

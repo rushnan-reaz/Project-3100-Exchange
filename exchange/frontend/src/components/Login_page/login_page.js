@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './login_page.css';
+import './CSS/login_page.css';
 
 const LoginPage = () => {
     const [isRegister, setIsRegister] = useState(false);

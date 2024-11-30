@@ -4,9 +4,8 @@ import Header from "./components/Header/Header";
 import Body_components from "./components/Body_components/index.js";
 import Question from "./components/Add-Question/Questions.js";
 import ViewQuestion from "./components/ViewQuestion/Index.js";
-import auth from "./components/Auth/index.js";
-// import login from "./components/Login_page/login_page.js";
-import login_cpy from "./components/Login_page/Login_page2.js";
+import login from "./components/Login_page/login_page.js";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -21,12 +20,12 @@ function App() {
         <Header />
         <Switch>
 
-          <Route exact path="/auth" component={auth} />
+        
           <Route exact path="/add-question" component={Question} />
           <Route exact path="/" component={Body_components} />
           <Route exact path="/question" component={ViewQuestion} />
           {/* <Route exact path="/login" component={login} /> */}
-          <Route exact path="/login" component={login_cpy} />
+          <Route exact path="/login" component={login} />
         </Switch>
       </Router>
     </div>

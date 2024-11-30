@@ -3,7 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const db = require("./db"); // Database connection
-const apirouter = require('./routes'); // Import your API routes file
+const apirouter = require('./routes'); // Import API routes file
+
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -14,6 +15,8 @@ db.connect();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
+
+
 // app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
@@ -40,6 +43,8 @@ app.use((req, res, next) => {
 
 // API Routes - This ensures that any route starting with '/api' uses the routes defined in 'apirouter'
 app.use('/api', apirouter);
+console.log(typeof apirouter);
+
 
 // Serve static files for React
 app.use('/upload', express.static(path.join(__dirname, '/../upload')));
