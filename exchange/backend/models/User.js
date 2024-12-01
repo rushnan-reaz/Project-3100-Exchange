@@ -1,6 +1,6 @@
-const e = require('express');
+
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+
 
 const UserSchema = new mongoose.Schema({
   firstname: {
@@ -21,6 +21,25 @@ const UserSchema = new mongoose.Schema({
       message: 'Invalid department'
     }
   },
+  studentId: {
+    type: String,
+    required: [true, 'Student ID is required'],
+    unique: true,
+    trim: true,
+    validate: {
+      validator: function(v) {
+        const year = parseInt(v.substring(0, 2), 10);
+        const idLength = v.length;
+        if (year < 13 && idLength === 6) {
+          return true;
+        } else if (year >= 13 && idLength === 7) {
+          return true;
+        }
+        return false;
+      },
+      message: 'Invalid student ID'
+    }
+  },
   email: {
     type: String,
     required: [true, 'Email is required'],
@@ -38,10 +57,6 @@ const UserSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Prevent duplicate keys errors from breaking the entire registration
-UserSchema.plugin(uniqueValidator, { 
-  message: '{PATH} must be unique' 
-});
 
 const User = mongoose.model('User', UserSchema);
 

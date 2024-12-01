@@ -1,8 +1,9 @@
 const express = require('express');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
+const e = require('express');
 
 dotenv.config();
 
@@ -10,6 +11,9 @@ const router = express.Router();
 
 // Controller for user login
 router.post('/', async (req, res) => {
+
+  // clearance
+  console.log('login is working');
   console.log('Login Request:', req.body);
 
   try {
@@ -30,43 +34,30 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Compare password with hashed password stored in the database
+    // Check if the password is correct
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
         message: 'Invalid email or password',
       });
     }
-
-    // Create JWT token
-    const payload = {
-      id: user._id,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '1h', // token expiration time
+    else {
+    // Generate JWT token
+    const jwtSecret = process.env.JWT_SECRET;
+    const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '1h' });
+    res.json({ token,
+      message: 'Login Successful',
+      userId: user._id,
+      email: user.email
     });
+      console.log('Login Successful');
+    }
 
-    // Send response with token
-    res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-      },
-    });
 
   } catch (error) {
     console.error('Login Error:', error);
     res.status(500).json({
-      message: 'Server error during login',
-      error: error.message,
+      message: 'Server error',
     });
   }
 });
