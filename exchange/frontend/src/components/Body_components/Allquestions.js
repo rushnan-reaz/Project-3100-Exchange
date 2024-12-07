@@ -1,9 +1,11 @@
-import React from 'react'
-import {Avatar} from "@mui/material";
-import {Link} from "react-router-dom";
+import React from 'react';
+import { Avatar } from "@mui/material";
+import { Link } from "react-router-dom";
 import "./CSS/Allquestions.css";
 
-function Allquestions(question) {
+function Allquestions({ question }) {
+  const { title, description, tag = [] } = question;
+
   return (
     <div className="all-q">
       <div className={"all-q-container"}>
@@ -18,38 +20,37 @@ function Allquestions(question) {
               <span>answers</span>
             </div>
             <div className={"all-option"}>
-
               <small>0 visitors</small>
             </div>
           </div>
         </div>
         <div className={"que-ans"}>
-          {/* <Link to="/question">question title</Link> */}
-          <Link to="/question">
-          {question?.title} 
+          <Link to={`/question/${question._id}`}>
+            {/* <h3>{title}</h3> */}
+            {title}
           </Link>
-          <div style={{width: "90%"}}>
+          <div style={{ width: "90%" }}>
             <div>
-              {/* <p>Question Description</p> */}
-              {question?.description}
+              {description}
             </div>
           </div>
-          <div style={{display: "flex"}}>
-            <span className={"tags"}>tag1</span>
-            <span className={"tags"}>tag2</span>
-            <span className={"tags"}>tag3</span>
+          <div style={{ display: "flex" }}>
+            {/* Render tags dynamically */}
+            {tag.map((t, index) => (
+              <span key={index} className={"tags"}>{t}</span>
+            ))}
           </div>
           <div className={"author"}>
-            <small>Timestamp</small>
+            <small>{new Date(question.created_at).toLocaleString()}</small>
             <div className={"author-info"}>
-              <Avatar/>
-              <p>Author</p>
+              <Avatar />
+              <p>{question.user || "Unknown"}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Allquestions;

@@ -7,18 +7,17 @@ import axios from "axios";
 function Index() {
   const [question, setQuestion] = React.useState([]);
 
-  React.useEffect(() => {
-    async function fetchData() {
-      await axios
-        .get("/api/question")
-        .then((res) => {
-          console.log(res.data);
+  
+    React.useEffect(() => {
+      async function fetchData() {
+        try {
+          const res = await axios.get("/api/question");
+          console.log("Fetched questions:", res.data);
           setQuestion(res.data.reverse());
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+        } catch (err) {
+          console.error("Error fetching questions:", err);
+        }
+      }
 
     fetchData();
   }, []);

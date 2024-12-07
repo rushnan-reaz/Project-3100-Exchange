@@ -43,21 +43,14 @@ function Main({ question }) {
           </div>
         </div>
         <div className="questions">
-            {
-                question.map((_q, index) => (
-                    <div key={index} className="question">
-                        <Allquestions  question={_q} />
-                    </div>
-                    
-                ))
-            }
-          {/* <div className="question">
-            <Allquestions />
-            <Allquestions />
-            <Allquestions />
-            <Allquestions />
-            <Allquestions />
-          </div> */}
+          {question.map((_q, index) => {
+            console.log("Rendering question:", _q);
+            return (
+              <div key={_q._id} className="question">
+                <Allquestions question={_q} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

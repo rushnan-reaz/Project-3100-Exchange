@@ -33,7 +33,7 @@ function Questions() {
     const questionJSON = {
       title: Question_title,
       description: Question_description,
-      tags: JSON.stringify(Tags),
+      tag: JSON.stringify(Tags),
       user: user,
     };
 
