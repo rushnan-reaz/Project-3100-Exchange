@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { auth, registerUser, loginUser } from '../../../firebase';
-
+import { auth, registerUser, loginUser } from '../../firebase';
+// import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    // const navigate = useNavigate();
     const [isRegister, setIsRegister] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -36,10 +37,24 @@ const LoginPage = () => {
         setError('');
         
         try {
-            await loginUser(loginData.email, loginData.password);
-            // Redirect or handle successful login
+            const user = await loginUser(loginData.email, loginData.password);
+            // Navigate to dashboard or home page after successful login
+            // navigate('/dashboard');
         } catch (error) {
-            setError(error.message || 'Login failed. Please try again.');
+            // Handle specific Firebase error codes
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    setError('No user found with this email.');
+                    break;
+                case 'auth/wrong-password':
+                    setError('Incorrect password.');
+                    break;
+                case 'auth/invalid-email':
+                    setError('Invalid email address.');
+                    break;
+                default:
+                    setError(error.message || 'Login failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -50,6 +65,7 @@ const LoginPage = () => {
         setLoading(true);
         setError('');
 
+        // Client-side validation
         if (registerData.password !== registerData.confirmPassword) {
             setError('Passwords do not match');
             setLoading(false);
@@ -58,10 +74,44 @@ const LoginPage = () => {
 
         try {
             const { firstName, lastName, department, studentId, email, password } = registerData;
-            await registerUser(email, password, firstName, lastName, department, studentId);
-            setIsRegister(false); // Switch to login after successful registration
+            const user = await registerUser(
+                email, 
+                password, 
+                firstName, 
+                lastName, 
+                department, 
+                studentId
+            );
+            
+            // Reset form and switch to login
+            setIsRegister(false);
+            setRegisterData({
+                firstName: '',
+                lastName: '',
+                department: '',
+                studentId: '',
+                email: '',
+                password: '',
+                confirmPassword: ''
+            });
+            
+            //success message
+            setError('Registration successful. Please log in.');
         } catch (error) {
-            setError(error.message || 'Registration failed. Please try again.');
+            // Firebase error codes
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    setError('Email is already registered.');
+                    break;
+                case 'auth/invalid-email':
+                    setError('Invalid email address.');
+                    break;
+                case 'auth/weak-password':
+                    setError('Password is too weak.');
+                    break;
+                default:
+                    setError(error.message || 'Registration failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -98,14 +148,18 @@ const LoginPage = () => {
                         onChange={(e) => handleChange(e, 'register')}
                         required
                     />
-                    <input
-                        type="text"
+                    <select
                         name="department"
-                        placeholder="Department"
                         value={registerData.department}
                         onChange={(e) => handleChange(e, 'register')}
                         required
-                    />
+                    >
+                        <option value="">Select Department</option>
+                        <option value="CSE">CSE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="ETE">ETE</option>
+                        <option value="ECE">ECE</option>
+                    </select>
                     <input
                         type="text"
                         name="studentId"
@@ -121,6 +175,7 @@ const LoginPage = () => {
                         value={registerData.password}
                         onChange={(e) => handleChange(e, 'register')}
                         required
+                        minLength="6"
                     />
                     <input
                         type="password"
@@ -129,6 +184,7 @@ const LoginPage = () => {
                         value={registerData.confirmPassword}
                         onChange={(e) => handleChange(e, 'register')}
                         required
+                        minLength="6"
                     />
                     <button type="submit" disabled={loading}>
                         {loading ? 'Registering...' : 'Register'}

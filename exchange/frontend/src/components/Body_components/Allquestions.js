@@ -3,7 +3,7 @@ import {Avatar} from "@mui/material";
 import {Link} from "react-router-dom";
 import "./CSS/Allquestions.css";
 
-function Allquestions() {
+function Allquestions(question) {
   return (
     <div className="all-q">
       <div className={"all-q-container"}>
@@ -24,9 +24,15 @@ function Allquestions() {
           </div>
         </div>
         <div className={"que-ans"}>
-          <Link>question title</Link>
+          {/* <Link to="/question">question title</Link> */}
+          <Link to="/question">
+          {question?.title} 
+          </Link>
           <div style={{width: "90%"}}>
-            <div>Answer</div>
+            <div>
+              {/* <p>Question Description</p> */}
+              {question?.description}
+            </div>
           </div>
           <div style={{display: "flex"}}>
             <span className={"tags"}>tag1</span>

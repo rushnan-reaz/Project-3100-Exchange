@@ -4,7 +4,10 @@ import Header from "./components/Header/Header";
 import Body_components from "./components/Body_components/index.js";
 import Question from "./components/Add-Question/Questions.js";
 import ViewQuestion from "./components/ViewQuestion/Index.js";
-import login from "./components/Login_page/login_page.js";
+import login from "./components/Login_page/Login_page2.js";
+// import login from "./components/Login_page/login_page.js";
+
+
 
 import {
   BrowserRouter as Router,

@@ -16,19 +16,19 @@ router.post("/", async (req, res) => {
   try {
 
     // Check if the user ID is valid
-    if (!req.body.user) {
-      return res.status(400).json({
-        status: false,
-        message: "User ID is required",
-      });
-    
-    // if (!Types.ObjectId.isValid(req.body.user)) {
-    //   return res.status(400).json({ 
-    //     status: false, 
-    //     message: "Invalid user ID" 
+    // if (!req.body.user) {
+    //   return res.status(400).json({
+    //     status: false,
+    //     message: "User ID is required",
     //   });
     
-    }
+    // // if (!Types.ObjectId.isValid(req.body.user)) {
+    // //   return res.status(400).json({ 
+    // //     status: false, 
+    // //     message: "Invalid user ID" 
+    // //   });
+    
+    // }
 
     // Create new QuestionDB object
     const questiondata = new QuestionDB({
