@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth, registerUser, loginUser } from '../../firebase';
+import { auth, registerUser, loginUser } from '../../../firebase';
 // import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {

@@ -6,6 +6,7 @@ const { Types } = require("mongoose");
 const QuestionDB = require("../models/Question");
 const CommentDB = require("../models/Comment");
 const AnswerDB = require("../models/Answer");
+const UserDB = require("../models/User");
 
 // router.get('/', (req, res) => {
 //   res.json({ message: 'This is the question route' });
@@ -97,10 +98,11 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    // Fetch related comments and answers
+    // Fetch related comments, answers, and user details
     const [comments, answers] = await Promise.all([
       CommentDB.find({ question_id: question._id }).lean(),
       AnswerDB.find({ question_id: question._id }).lean(),
+      UserDB.find({ user: question.user }).lean(),
     ]);
 
     // Return question
@@ -108,6 +110,7 @@ router.get("/:id", async (req, res) => {
       ...question,
       comments,
       answers,
+      user: users[0],
     });
   } catch (error) {
     console.error("Error retrieving question:", error);
