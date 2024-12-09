@@ -15,9 +15,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px;
+    padding: 0px;
     margin-bottom: 10px;
-    /*border-bottom: 1px solid #e0e0e0;*/
+    border-bottom: 1px solid #e0e0e0;
     width: 100%;
     /*background-color: royalblue;*/
     align-items: center;
@@ -49,11 +49,13 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0 0 0 20px;
+    padding: 0 0 0 0px;
     margin-bottom: 10px;
     color: rgba(0,0,0,0.8);
     width: 100%;
-    /*background-color: aqua;*/
+    border-bottom: 1px solid #e0e0e0;
+
+    /* background-color: aqua; */
 }
 
 .main-filter{
@@ -108,7 +110,7 @@
     display: flex;
     flex-direction: column;
     padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
+    /* border-bottom: 1px solid #e0e0e0; */
     width: 100%;
     /*background-color: red;*/
 }

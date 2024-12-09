@@ -2,22 +2,22 @@
 .all-q {
     display: flex;
     width: 100%;
-    border-bottom: 1px solid #e0e0e0;
+    /* border-bottom: 1px solid #e0e0e0; */
     padding: 20px 0;
-    /*background-color: #f9f9f9; /* background color */
+    /*background-color: #f9f9f9;*/
 }
 
-/*!* Flexbox for left stats and right content *!*/
+
 .all-q-container {
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
-    /*background-color: white;
-    padding: 20px;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* shadow */
-    /*border-radius: 8px;*/
-    /*margin-bottom: 20px; !* spacing between question blocks *!*/
+    /*background-color: white;*/
+    /* padding: 20px; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    /*margin-bottom: 20px;*/
 }
 
 /* Styling for the left stats (votes, answers, visitors) */
@@ -27,8 +27,8 @@
     justify-content: center;
     align-items: center;
     margin-right: 30px;
-    /*background-color: blue;
-    color: #333; /* Neutral text color */
+    /* background-color: blue; */
+    /* color: #333;  */
 }
 
 
@@ -59,7 +59,7 @@
     /*flex: 1;*/
     width: 100%;
     justify-content: space-between;
-    /*background-color: green;*/
+    /* background-color: green; */
 }
 
 /* Styling question title */
@@ -96,6 +96,8 @@
     align-items: center;
     margin-top: 10px;
     margin-left: auto;
+    margin-right: 10px;
+    /* background-color: #007cd4; */
 }
 .author small{
     color: rgba(0,0,0,0.7);
@@ -109,6 +111,25 @@
 
 .author-info p {
     margin-left: 10px;
+    margin-right: 10px;
     color: #007cd4;
     font-size: small;
 }
+
+.desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+    max-height: calc(100% * 2);
+    word-break: break-word;
+  }
+
+.date-time small {
+    display: block;  
+    margin: 0;
+  }
+  

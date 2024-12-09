@@ -23,6 +23,9 @@
     font-size: 24px;
     font-weight: bold;
     margin: 0;
+    word-wrap: break-word; 
+    word-break: break-all; 
+    overflow-wrap: break-word; 
   }
   
   .main-ask button {
@@ -119,13 +122,17 @@
   /* Question and answer content styles */
   .all-questions-right {
     flex-grow: 1;
+    word-wrap: break-word; 
+    word-break: break-all; 
+    overflow-wrap: break-word; 
   }
   
   .author {
     display: flex;
     flex-direction: column;
     align-items: last baseline;
-    margin-top: 10px;
+    margin-top: 10%;
+    margin-bottom: 0%;
     color: rgba(0, 0, 0, 0.6);
     /* background-color: royalblue; */
   }
@@ -135,6 +142,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 5px;
+    /* background-color: #b1daf7; */
 
   }
   
@@ -273,4 +281,7 @@
   }
   .all-options .icons:hover {
     color: black;
+  }
+  .date span {
+    display: block;
   }

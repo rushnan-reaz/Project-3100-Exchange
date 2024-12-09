@@ -33,14 +33,14 @@ function Questions() {
     const questionJSON = {
       title: Question_title,
       description: Question_description,
-      tag: JSON.stringify(Tags),
+      tag: Tags.length > 0 ? Tags : ["untagged"],
       user: user,
     };
 
     await axios
       .post("/api/question", questionJSON)
       .then((res) => {
-        console.log("success_post_question"); 
+        console.log("success_post_question");
         // console.log(questionJSON);
         alert("Question posted successfully");
         setLoading(false);
@@ -49,7 +49,6 @@ function Questions() {
       .catch((err) => {
         console.log(err);
       });
- 
   };
 
   return (
@@ -87,10 +86,30 @@ function Questions() {
             <div className="options">
               <div className="title">
                 <h2>Tags</h2>
-                <small>Add necessary Tags</small>
+                <small>
+                  Add necessary Tags<sub>(Duplicate tags are not allowed.)</sub>
+                </small>
                 <TagsInput
                   value={Tags}
-                  onChange={(tags) => setTags(tags)}
+                  onChange={(tags) => {
+
+                    // Convert all tags to lowercase for comparison
+                    const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
+
+                    // Check for duplicates using the lowercase tags
+                    const hasDuplicates = lowerCaseTags.some(
+                      (tag, index) =>
+                        lowerCaseTags.slice(0, index).includes(tag) ||
+                        lowerCaseTags.slice(index + 1).includes(tag)
+                    );
+
+                    if (hasDuplicates) {
+                      alert("Duplicate tags are not allowed!");
+                      return;
+                    }
+
+                    setTags(tags);
+                  }}
                   name="tags"
                   placeHolder="Press Enter to add Tags"
                 />

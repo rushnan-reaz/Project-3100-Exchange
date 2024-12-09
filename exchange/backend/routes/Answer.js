@@ -22,6 +22,7 @@ router.post("/", async (req, res) => {
         const answerdata = new AnswerDB({
             question_id: req.body.question_id,
             answer: req.body.answer,
+            createdAt: req.body.created_at,
             user: req.body.user,
         });
 

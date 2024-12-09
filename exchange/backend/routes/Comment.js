@@ -8,12 +8,13 @@ router.get('/', (req, res) => {
 });
 
 // Add comment route
-router.post('/', async (req, res) => {
+router.post('/:id', async (req, res) => {
     try {
         // Validate request body
         const { question_id, answer_id, comment, user } = req.body;
-
-        if (!question_id || !comment || !user) {
+        
+        if (!question_id || !comment ) {
+        // if (!question_id || !comment || !user) {
             return res.status(400).json({
                 status: false,
                 message: "Missing required fields: question_id, comment, or user.",
