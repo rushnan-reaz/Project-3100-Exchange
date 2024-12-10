@@ -10,15 +10,6 @@ router.get('/', (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        // Validate input
-        // if (!req.body.user) {
-        //     return res.status(400).json({
-        //         status: false,
-        //         message: "User field is required",
-        //     });
-        // }
-
-        // Create a new AnswerDB object
         const answerdata = new AnswerDB({
             question_id: req.body.question_id,
             answer: req.body.answer,

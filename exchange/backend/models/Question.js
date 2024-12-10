@@ -15,10 +15,19 @@ const QuestionSchema = mongoose.Schema({
     required: true,
   },
   user: {
-    type: String,
-    // type: mongoose.Schema.Types.ObjectId, /
-    // ref: 'User', 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
     required:false, 
+  },
+  likes: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+  dislikes: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
   },
   created_at: {
     type: Date,

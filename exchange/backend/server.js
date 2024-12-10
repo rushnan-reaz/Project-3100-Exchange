@@ -1,10 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const path = require('path');
-const db = require("./db"); // Database connection
-const apirouter = require('./routes/Index'); // Import API routes file
-const morgan = require('morgan'); // Import morgan for logging
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const db = require('./db');
+const apirouter = require('./routes/Index');
+const { sessionMiddleware, logSession } = require('./middleware/session');
+const authenticate = require('./middleware/authenticate');
+const helmet = require('helmet'); // Add helmet for security headers
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -12,56 +15,94 @@ const port = process.env.PORT || 8000;
 // Connect to the database
 db.connect();
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(express.json());
+// Security middleware
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:3000'],
+      }
+    }
+  }));
 
-// Use morgan for logging HTTP requests
-app.use(morgan('combined'));  // 'combined' provides detailed logs, you can use 'dev' for more concise logs
+  
+// CORS configuration - must be before other middleware
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['set-cookie'],
+    maxAge: 86400 // 24 hours
+}));
 
-// Log request URLs (these logs can be removed once morgan is in place)
-// app.use((req, res, next) => {
-//     console.log('Raw Request URL:', req.url); 
-//     next();
-// });
-// app.use((req, res, next) => {
-//     console.log('Middleware Request URL:', req.originalUrl);
-//     next();
-// });
-app.use((req, res, next) => {
-    console.log(`Request received: ${req.method} ${req.originalUrl}`);
-    next();
-});
+// Basic middleware
+app.use(morgan('combined'));
+app.use(cookieParser());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Set headers for all routes
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
+// Session configuration
+app.use(sessionMiddleware);
+app.use(logSession);
 
-// API Routes - This ensures that any route starting with '/api' uses the routes defined in 'apirouter'
+// Debug middleware to log requests (only in development)
+if (process.env.NODE_ENV !== 'production') {
+    app.use((req, res, next) => {
+        console.log('Request Headers:', req.headers);
+        console.log('Cookies:', req.cookies);
+        console.log('Session:', req.session);
+        next();
+    });
+}
+
+// API Routes
 app.use('/api', apirouter);
 
 // Serve static files for React
-app.use('/upload', express.static(path.join(__dirname, '/../upload')));
-app.use(express.static(path.join(__dirname, '/../frontend/build')));
+app.use('/upload', express.static(path.join(__dirname, '/../upload'), {
+    maxAge: '1d',
+    etag: true
+}));
+app.use(express.static(path.join(__dirname, '/../frontend/build'), {
+    maxAge: '1d',
+    etag: true
+}));
 
-// Catch-all route for React frontend (ensures React app is served for other routes)
-app.get('*', (req, res) => {
-    if (req.path.startsWith('/api')) {
-        return res.status(404).send('API route not found');
-    }
-    try {
-        res.sendFile(path.join(__dirname + '/../frontend/build/index.html'));
-    } catch (err) {
-        res.status(500).send('Error in loading file');
-    }
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(err.status || 500).json({
+        message: process.env.NODE_ENV === 'production' 
+            ? 'Internal Server Error' 
+            : err.message
+    });
 });
 
-// Start the server
-app.listen(port, () => {
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (error) => {
+    console.error('Unhandled Rejection:', error);
+    process.exit(1);
+});
+
+// Start server
+const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.info('SIGTERM signal received.');
+    server.close(() => {
+        console.log('Server closed.');
+        process.exit(0);
+    });
+});
+
+module.exports = app;

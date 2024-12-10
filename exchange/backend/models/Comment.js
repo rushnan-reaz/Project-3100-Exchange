@@ -4,12 +4,12 @@ const CommentSchema = new mongoose.Schema({
   question_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Question',
-    required: true, 
+    required: false, 
   },
   answer_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Answer',
-    required: false, 
+    required: true, 
   },
   comment: {
     type: String,
@@ -21,7 +21,8 @@ const CommentSchema = new mongoose.Schema({
     required: true,
   },
   user: {
-    type: Object, 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
     required: true,
   },
 });

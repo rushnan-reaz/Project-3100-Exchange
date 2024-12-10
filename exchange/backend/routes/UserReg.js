@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 
     // Check if user already exists
     const existingUser = await User.findOne({
-      $or: [{ email }, { studentId }],
+      $or: [{ email }],
     });
 
     if (existingUser) {

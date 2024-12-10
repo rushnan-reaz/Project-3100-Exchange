@@ -123,13 +123,15 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.2;
+    line-height: 2;
     max-height: calc(100% * 2);
     word-break: break-word;
   }
 
+
 .date-time small {
     display: block;  
     margin: 0;
+    /* background-color: aqua; */
   }
-  
+

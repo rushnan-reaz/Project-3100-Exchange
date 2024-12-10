@@ -62,9 +62,10 @@ function Allquestions({ question }) {
               <span className="tags">No tags</span>
             )}
           </div>
-          <div className={"author"}>
-            <div className={"author"}>
+         
+            <div className="author">
               <div className="date-time">
+              <small>Asked:</small>
                 <small>
                   {new Date(question.created_at).toLocaleDateString()}
                 </small>
@@ -72,12 +73,11 @@ function Allquestions({ question }) {
                   {new Date(question.created_at).toLocaleTimeString()}
                 </small>
               </div>
-              <div className={"author-info"}>
+              <div className="author-info">
                 <Avatar />
-                <p>{question.user || "Unknown"}</p>
+                <p>{question.user?.username || "Unknown"}</p>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>

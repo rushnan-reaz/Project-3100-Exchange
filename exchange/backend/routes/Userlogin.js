@@ -1,64 +1,70 @@
 const express = require('express');
-const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const dotenv = require('dotenv');
-const jwt = require('jsonwebtoken');
-const e = require('express');
-
-dotenv.config();
-
+const User = require('../models/User');
+const { generateTokens, setRefreshTokenInCookie } = require('../helper/logauth.js');
+const createError = require('http-errors');
 const router = express.Router();
 
-// Controller for user login
 router.post('/', async (req, res) => {
-
-  // clearance
-  console.log('login is working');
   console.log('Login Request:', req.body);
 
   try {
     const { email, password } = req.body;
 
-    // Check if email and password are provided
     if (!email || !password) {
-      return res.status(400).json({
-        message: 'Email and password are required',
-      });
+      return res.status(400).json({ message: 'Email and password are required.' });
     }
 
-    // Find a user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({
-        message: 'Invalid email or password',
-      });
+      return res.status(400).json({ message: 'Invalid email or password.' });
     }
 
-    // Check if the password is correct
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({
-        message: 'Invalid email or password',
+      return res.status(400).json({ message: 'Invalid email or password.' });
+    }
+
+    // Set session data
+    req.session.userId = user._id;
+    req.session.username = user.username;
+    
+    // Save session explicitly
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          reject(err);
+        }
+        resolve();
       });
-    }
-    else {
-    // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET;
-    const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '1h' });
-    res.json({ token,
-      message: 'Login Successful',
-      userId: user._id,
-      email: user.email
     });
-      console.log('Login Successful');
-    }
 
+    console.log('Session saved with userId:', req.session);
 
+    // Generate tokens and set refresh token cookie
+    const tokens = generateTokens(user._id);
+    setRefreshTokenInCookie(res, tokens.refreshToken);
+
+    // Set response headers for CORS
+    res.set({
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Origin': 'http://localhost:3000'
+    });
+
+    // Send response
+    res.json({
+      message: 'Login successful.',
+      userId: user._id,
+      username: user.username,
+      email: user.email,
+      accessToken: tokens.accessToken
+    });
+
+    console.log('Login Successful');
   } catch (error) {
     console.error('Login Error:', error);
-    res.status(500).json({
-      message: 'Server error',
-    });
+    res.status(500).json({ message: 'Server error.' });
   }
 });
 

@@ -8,40 +8,37 @@ const CommentDB = require("../models/Comment");
 const AnswerDB = require("../models/Answer");
 const UserDB = require("../models/User");
 
-// router.get('/', (req, res) => {
-//   res.json({ message: 'This is the question route' });
-// });
+const authenticate = require('../middleware/authenticate'); // Add authentication middleware
 
-router.post("/", async (req, res) => {
+router.post("/", authenticate, async (req, res) => {
   try {
-    // Check if the user ID is valid
-    // if (!req.body.user) {
-    //   return res.status(400).json({
-    //     status: false,
-    //     message: "User ID is required",
-    //   });
+    // Get userId from authenticated session
+    const userId = req.session.userId;
 
-    // // if (!Types.ObjectId.isValid(req.body.user)) {
-    // //   return res.status(400).json({
-    // //     status: false,
-    // //     message: "Invalid user ID"
-    // //   });
+    console.log("userId", userId);
 
-    // }
+    if (!userId) {
+      return res.status(401).json({
+        status: false,
+        message: "Authentication required",
+      });
+    }
 
-  const normalizedTags = [...new Set(req.body.tag.map((tag) => tag.toLowerCase()))];
+    // Normalize tags
+    const normalizedTags = [...new Set(req.body.tag.map((tag) => tag.toLowerCase()))];
 
-  // Create the question data
-  const questiondata = new QuestionDB({
-    title: req.body.title,
-    description: req.body.description,
-    tag: normalizedTags, // Save only normalized and unique tags
-    user: req.body.user,
-    // user: Types.ObjectId(req.body.user),
-  });
+    // Create question with authenticated user
+    const questionData = new QuestionDB({
+      title: req.body.title,
+      description: req.body.description,
+      tag: normalizedTags,
+      user: userId, // Use authenticated userId
+    });
+  console.log("questionData", questionData);
 
-    // Save the data to the database
-    const doc = await questiondata.save();
+
+
+    const doc = await questionData.save();
     res.status(201).json({ status: true, data: doc });
   } catch (error) {
     console.error("Question creation error:", error);
@@ -53,10 +50,13 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Fetch all questions
 router.get("/", async (req, res) => {
   try {
-    // Fetch all questions
-    const questions = await QuestionDB.find({}).lean();
+    // Fetch all questions with user details populated (ObjectId and username only)
+    const questions = await QuestionDB.find({})
+      .populate("user", "_id username") // Populate ObjectId and username
+      .lean();
 
     if (!questions.length) {
       return res.status(404).json({ message: "No questions found" });
@@ -70,7 +70,7 @@ router.get("/", async (req, res) => {
       AnswerDB.find({ question_id: { $in: questionIds } }).lean(),
     ]);
 
-    // Map question with its comments and answers
+    // Map each question with its comments and answers
     const enrichedQuestions = questions.map((question) => ({
       ...question,
       comments: comments.filter(
@@ -81,7 +81,6 @@ router.get("/", async (req, res) => {
       ),
     }));
 
-    // Return data
     res.status(200).json(enrichedQuestions);
   } catch (error) {
     console.error("Error retrieving questions:", error);
@@ -89,33 +88,37 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Fetch a specific question by ID
 router.get("/:id", async (req, res) => {
   try {
-    // Fetch the specific question
-    const question = await QuestionDB.findById(req.params.id).lean();
+    // Fetch the specific question with user details populated (ObjectId and username only)
+    const question = await QuestionDB.findById(req.params.id)
+      .populate("user", "_id username") // Populate the user for the question itself
+      .lean();
 
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    // Fetch related comments, answers, and user details
-    const [comments, answers] = await Promise.all([
-      CommentDB.find({ question_id: question._id }).lean(),
-      AnswerDB.find({ question_id: question._id }).lean(),
-      UserDB.find({ user: question.user }).lean(),
-    ]);
+    // Fetch related answers and populate user field for each answer
+    const answers = await AnswerDB.find({ question_id: question._id })
+      .populate("user", "_id username") // Populate user for each answer
+      .lean();
 
-    // Return question
+    // Fetch related comments (you can populate if necessary)
+    const comments = await CommentDB.find({ question_id: question._id }).lean();
+
+    // Return the enriched question data with populated answers and comments
     res.status(200).json({
       ...question,
       comments,
       answers,
-      user: users[0],
     });
   } catch (error) {
     console.error("Error retrieving question:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 module.exports = router;
