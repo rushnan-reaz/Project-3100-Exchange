@@ -172,63 +172,59 @@
   
   /* Comment styles */
   .comments {
-    margin-top: 15px;
-    /* background-color: #007bff ; */
+    margin-top: 1rem;
+    border-left: 2px solid #e0e0e0;
+    padding-left: 1rem;
   }
   
-  .text {
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.7);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  .comment {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
   }
-
-  .text span {
-    font-size: 14px;
-    background-color: #b1daf7;
-    color:#05258b;
-    padding: 2px 5px;
-    border-radius: 5px;
+  
+  .comment-text {
+    margin: 0;
+  }
+  
+  .comment-author {
+    color: #666;
+    margin-left: 0.5rem;
+    font-style: italic;
+  }
+  
+  .comment-date {
+    color: #999;
+    display: block;
+    margin-top: 0.25rem;
   }
   
   .add-comment {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
+    margin-top: 0.5rem;
   }
   
   .add-comment textarea {
-    width: 80%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     resize: vertical;
-    min-height: 80px;
   }
   
-  .add-comment button {
-    background-color: #0095ff;
-    padding: 10px 10px;
-    margin-top: 10px;
-    border: 2px solid #007cd446;
-    color: #fff;
-    outline: none;
-    width: 200px;
-    border-radius: 3px;
+  .comment-toggle {
+    background: none;
+    border: none;
+    color: #0095ff;
     cursor: pointer;
-    transition: all 0.1s ease;
+    padding: 0;
+    margin: 0.5rem 0;
   }
   
-  .add-comment button:hover {
-    background-color: #0056b3;
+  .comment-toggle:hover {
+    text-decoration: underline;
   }
-
-  .add-comment button:active {
-    top: 2px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transform: scale(0.99) translateY(1px);
-  }
-  
   
  
   

@@ -46,12 +46,27 @@ export const AuthProvider = ({ children }) => {
       
       console.log('Session check response:', response.data);
       
-      if (response.status === 200 && response.data.user) {
-        setIsAuthenticated(true);
-        setUser(response.data.user);
-        console.log('User set:', response.data.user);
+      if (response.status === 200 && response.data.userId) {
+        try {
+          const userResponse = await axios.get(`/api/user`, {
+            withCredentials: true
+          });
+          
+          console.log('User response:', userResponse.data);
+  
+          if (userResponse.data && userResponse.data.user) {
+            setIsAuthenticated(true);
+            setUser(userResponse.data.user);
+            console.log('User state updated:', userResponse.data.user);
+          } else {
+            throw new Error('No user data in response');
+          }
+        } catch (userError) {
+          console.error('Error fetching user data:', userError);
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       } else {
-        console.log('No user data in response');
         setIsAuthenticated(false);
         setUser(null);
       }
@@ -67,14 +82,29 @@ export const AuthProvider = ({ children }) => {
   // Handle login function
   const login = async (userData, token) => {
     try {
+      // Set auth token if using JWT
+      if (token) {
+        localStorage.setItem('accessToken', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      }
+  
+      // Update auth state
       setIsAuthenticated(true);
       setUser(userData);
-      localStorage.setItem('accessToken', token);
-      await checkAuthStatus(); // Verify session after login
+      
+      console.log('Login successful:', {
+        isAuthenticated: true,
+        user: userData
+      });
+  
+      // Trigger auth state check
+      await checkAuthStatus();
+  
     } catch (error) {
       console.error('Login error:', error);
       setIsAuthenticated(false);
       setUser(null);
+      throw error;
     }
   };
 

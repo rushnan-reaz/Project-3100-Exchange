@@ -22,21 +22,39 @@ const AnswerSchema = new mongoose.Schema({
     required: true,
   },
 
-  likes: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null,
-  },
-  dislikes: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null,
-  },
+  likes:
+  [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  ],
+  //  {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   default: null,
+  // },
+  
+  dislikes: 
+  [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  ],
+  //  {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   default: null,
+  // },
 
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment", 
+      required: false,
     },
   ],
 });

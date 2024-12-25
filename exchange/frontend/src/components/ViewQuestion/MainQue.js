@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
@@ -8,16 +8,19 @@ import "react-quill/dist/quill.snow.css";
 import "./CSS/Index.css";
 import axios from "axios";
 import ReactHtmlParser from "react-html-parser";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../features/counter/userSlice";
+import { AuthContext } from "../../context/authcontext";
 
 function MainQue() {
-  const [show, setShow] = useState(false);
   const [answer, setAnswer] = useState("");
-  const user = useSelector(selectUser);
-  const [comment, setComment] = useState("");
   const [questiondata, setQuestiondata] = useState();
-  const [selectedAnswerId, setSelectedAnswerId] = useState();
+  const { user, isAuthenticated } = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [commentStates, setCommentStates] = useState({});
+  const [commentVisibility, setCommentVisibility] = useState({});
+  const [commentLoading, setCommentLoading] = useState({});
 
   let search = window.location.search;
   let params = new URLSearchParams(search);
@@ -27,32 +30,78 @@ function MainQue() {
     setAnswer(value);
   };
 
+  // In MainQue.js useEffect
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const res = await axios.get(`/api/question/${question_id}`);
-        console.log(res.data);
-        setQuestiondata(res.data);
+        console.log("Raw response:", res.data);
+
+        // Transform and validate data
+        const transformedData = {
+          ...res.data,
+          answers: res.data.answers?.map((answer) => ({
+            ...answer,
+            comments: answer.comments
+              ?.filter(comment => comment && typeof comment === 'object')
+              .map((comment) => ({
+                _id: comment._id,
+                comment: comment.comment,
+                createdAt: comment.createdAt,
+                user: comment.user || { username: "Anonymous" },
+                answer_id: answer._id,
+              })) || []
+          })) || []
+        };
+
+        console.log("Transformed data Mainque:", transformedData);
+        setQuestiondata(transformedData);
       } catch (error) {
-        console.log(
-          error.response ? error.response.data.message : error.message
-        );
+        console.error("Error fetching question:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchQuestion();
+
+    if (question_id) {
+      fetchQuestion();
+    }
   }, [question_id]);
 
-  async function updateAnswer() {
+  const updateAnswer = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`/api/question/${question_id}`);
-      console.log(res.data);
+      if (res.data.answers) {
+        res.data.answers = res.data.answers.map((answer) => ({
+          ...answer,
+          comments: Array.isArray(answer.comments)
+            ? answer.comments.map((comment) => ({
+                ...comment,
+                user: comment.user || { username: "Anonymous" },
+              }))
+            : [],
+        }));
+      }
       setQuestiondata(res.data);
     } catch (error) {
-      console.log(error.response ? error.response.data.message : error.message);
+      console.error("Error updating answers:", error);
+      alert("Failed to refresh answers");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async () => {
+    if (!isAuthenticated || !user) {
+      alert("Please login to post an answer");
+      return;
+    }
+
     if (answer.trim() === "") {
       alert("Answer cannot be empty");
       return;
@@ -62,18 +111,24 @@ function MainQue() {
       question_id: question_id,
       answer: answer,
       created_at: new Date(),
-      user: user,
+      user: user._id,
     };
 
     try {
-      await axios.post("/api/answer", answerData, {
+      const response = await axios.post("/api/answer", answerData, {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       });
-      alert("Answer posted successfully");
-      setAnswer("");
-      updateAnswer();
+
+      if (response.data.status) {
+        alert("Answer posted successfully");
+        setAnswer("");
+        updateAnswer();
+      } else {
+        throw new Error(response.data.message);
+      }
     } catch (error) {
       console.error("Error posting answer:", error);
       alert(
@@ -83,37 +138,66 @@ function MainQue() {
     }
   };
 
-  const handleComment = async () => {
-    if (comment.trim() === "") {
+  const handleCommentClick = (answerId) => {
+    setCommentVisibility((prev) => ({
+      ...prev,
+      [answerId]: !prev[answerId],
+    }));
+  };
+
+  const handleCommentChange = (answerId, value) => {
+    setCommentStates((prev) => ({
+      ...prev,
+      [answerId]: value,
+    }));
+  };
+
+  const handleComment = async (answerId) => {
+    if (!isAuthenticated || !user) {
+      alert("Please login to post a comment");
+      return;
+    }
+
+    const commentText = commentStates[answerId]?.trim();
+    if (!commentText) {
       alert("Comment cannot be empty");
       return;
     }
 
-    const commentData = {
-      question_id: questiondata._id,
-      answer_id: selectedAnswerId,
-      comment: comment,
-      user: user,
-    };
+    setCommentLoading((prev) => ({ ...prev, [answerId]: true }));
 
     try {
-      await axios.post("/api/comment/", commentData, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.post(
+        "/api/comment",
+        {
+          question_id: question_id,
+          answer_id: answerId,
+          comment: commentText,
+          user: user._id,
+          created_at: new Date(),
         },
-      });
-      alert("Comment posted successfully");
-      setComment("");
-      setShow(false);
-      updateAnswer();
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status) {
+        setCommentStates((prev) => ({ ...prev, [answerId]: "" }));
+        setCommentVisibility((prev) => ({ ...prev, [answerId]: false }));
+        await updateAnswer();
+      }
     } catch (error) {
       console.error("Error posting comment:", error);
-      alert(
-        error.response?.data?.message ||
-          "Failed to post comment. Please try again."
-      );
+      alert(error.response?.data?.message || "Failed to post comment");
+    } finally {
+      setCommentLoading((prev) => ({ ...prev, [answerId]: false }));
     }
   };
+
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+  if (!questiondata) return <div className="not-found">Question not found</div>;
 
   return (
     <div className="main">
@@ -171,7 +255,6 @@ function MainQue() {
           <div key={answer._id} className="all-question-container">
             <div className="all-questions-left">
               <div className="all-options">
-                {/* Displaying like and dislike stats */}
                 <p className="stat">{answer?.likes?.length || 0}</p>
                 <p className="like1">
                   <ThumbUpOffAltIcon />
@@ -199,45 +282,74 @@ function MainQue() {
                   <p>{answer.user?.username || "Anonymous"}</p>
                 </div>
               </div>
-              <div className="comments">
-                {/* Display Existing Comments for the Selected Answer */}
-                {answer.comments && answer.comments.length > 0 ? (
-                  answer.comments.map((comment) => (
-                    <div key={comment._id} className="comment">
-                      <p>
-                        {comment.comment}{" "}
-                        <span>- {comment.user?.username || "Anonymous"}</span>
-                      </p>
-                      <small>
-                        {comment.createdAt
-                          ? new Date(comment.createdAt).toLocaleString()
-                          : "Date not available"}
-                      </small>
-                    </div>
-                  ))
-                ) : (
-                  <p>No comments yet. Be the first to comment!</p>
-                )}
 
-                {/* Add Comment Section */}
-                <p className="text-link" onClick={() => setShow(!show)}>
-                  Add a comment
+              <div className="comments">
+        {Array.isArray(answer?.comments) && answer.comments.length > 0 ? (
+          answer.comments.map((comment) => {
+            console.log("Rendering comment:", answer.comments);
+            console.log("Comment user:", answer.comments.user);
+            console.log("Comment user username:", answer.comments.user?.username);
+            // Skip invalid comments
+            // if (!comment?._id || !comment?.comment) {
+            //   console.warn("Invalid comment data:", comment);
+            //   return null;
+            // }
+
+            return (
+              <div key={comment._id} className="comment">
+                <p className="comment-text">
+                  {comment.comment}
+                  
+                  <span className="comment-author">
+                    {comment.user?.username
+                      ? ` - @${comment.user.username}`
+                      : " - Anonymous"}
+                  </span>
                 </p>
-                {show && (
-                  <div className="add-comment">
-                    <textarea
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Add your comment"
-                      rows={3}
-                    ></textarea>
-                    <button onClick={handleComment}>Post Comment</button>
-                  </div>
+                {comment.createdAt && (
+                  <small className="comment-date">
+                    {new Date(comment.createdAt).toLocaleString()}
+                  </small>
                 )}
               </div>
-            </div>
+            );
+          })
+        ) : (
+          <p className="no-comments">No comments yet</p>
+        )}
+
+        <button
+          className="comment-toggle"
+          onClick={() => handleCommentClick(answer._id)}
+        >
+          {commentVisibility[answer._id] ? "Cancel" : "Add Comment"}
+        </button>
+
+        {commentVisibility[answer._id] && (
+          <div className="add-comment">
+            <textarea
+              value={commentStates[answer._id] || ""}
+              onChange={(e) =>
+                handleCommentChange(answer._id, e.target.value)
+              }
+              placeholder="Add your comment..."
+              rows={3}
+              disabled={commentLoading[answer._id]}
+            />
+            <button
+              onClick={() => handleComment(answer._id)}
+              disabled={commentLoading[answer._id]}
+            >
+              {commentLoading[answer._id]
+                ? "Posting..."
+                : "Post Comment"}
+            </button>
           </div>
-        ))}
+        )}
+      </div>
+    </div>
+  </div>
+))}
 
         <div className="main-answer">
           <h3>Your Answer</h3>

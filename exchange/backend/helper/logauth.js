@@ -9,23 +9,23 @@ const refreshTokenSecret = process.env.REFRESH_TOKEN;
 // Common cookie options
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 // Middleware to generate access and refresh tokens
 const generateTokens = (userId) => {
   console.log("Generating tokens for user:", userId);
-  
-  const accessToken = jwt.sign({ userId }, jwtSecret, { 
-    expiresIn: "15m" // Increased from 1m to 15m for better UX
+
+  const accessToken = jwt.sign({ userId }, jwtSecret, {
+    expiresIn: "15m", // Increased from 1m to 15m for better UX
   });
   console.log("Access token generated:", accessToken);
 
-  const refreshToken = jwt.sign({ userId }, refreshTokenSecret, { 
-    expiresIn: "7d" 
+  const refreshToken = jwt.sign({ userId }, refreshTokenSecret, {
+    expiresIn: "7d",
   });
   console.log("Refresh token generated:", refreshToken);
 
@@ -46,7 +46,9 @@ const verifyAccessToken = (req, res, next) => {
 
   if (!token) {
     console.log("No access token in session");
-    return res.status(401).json({ message: "Access denied. No token provided." });
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
   }
 
   try {
@@ -66,7 +68,7 @@ const refreshAccessToken = async (req, res) => {
   console.log("Refreshing access token...");
   try {
     const refreshToken = req.cookies.refreshToken;
-    
+
     if (!refreshToken) {
       console.log("No refresh token provided");
       return res.status(401).json({ message: "No refresh token provided" });
@@ -98,20 +100,20 @@ const refreshAccessToken = async (req, res) => {
 
     return res.json({
       accessToken: newTokens.accessToken,
-      message: "Token refreshed successfully"
+      message: "Token refreshed successfully",
     });
   } catch (error) {
     console.error("Refresh token verification failed:", error.message);
     // Clear invalid tokens and session
-    res.clearCookie('refreshToken', cookieOptions);
-    res.clearCookie('sessionId', cookieOptions);
-    
+    res.clearCookie("refreshToken", cookieOptions);
+    res.clearCookie("sessionId", cookieOptions);
+
     if (req.session) {
       req.session.destroy((err) => {
         if (err) console.error("Session destruction error:", err);
       });
     }
-    
+
     return res.status(403).json({ message: "Invalid refresh token" });
   }
 };
@@ -119,30 +121,70 @@ const refreshAccessToken = async (req, res) => {
 // Middleware to handle logout
 const logout = async (req, res) => {
   console.log("Processing logout request...");
-  
+
+  // If headers already sent, exit early
+  if (res.headersSent) {
+    console.warn("Headers already sent, skipping logout response");
+    return;
+  }
+
+  let hasError = false;
+
+  // Clear cookies with a single options object
+  const clearOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/"
+  };
+
   try {
     // Clear all cookies
-    res.clearCookie('refreshToken', cookieOptions);
-    res.clearCookie('sessionId', cookieOptions);
-    res.clearCookie('accessToken', cookieOptions);
+    ["refreshToken", "sessionId", "accessToken"].forEach(cookie => {
+      try {
+        res.clearCookie(cookie, clearOptions);
+      } catch (err) {
+        console.error(`Error clearing cookie ${cookie}:`, err);
+        hasError = true;
+      }
+    });
 
     // Destroy session if it exists
     if (req.session) {
       await new Promise((resolve, reject) => {
-        req.session.destroy((err) => {
+        req.session.destroy(err => {
           if (err) {
             console.error("Session destruction error:", err);
-            reject(err);
+            hasError = true;
           }
           resolve();
         });
       });
     }
 
-    return res.status(200).json({ message: "Logout successful" });
+    // Send single response based on success/failure
+    if (!res.headersSent) {
+      if (hasError) {
+        res.status(500).json({
+          success: false,
+          message: "Partial logout - some cleanup failed"
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: "Logged out successfully"
+        });
+      }
+    }
+
   } catch (error) {
     console.error("Logout error:", error);
-    return res.status(500).json({ message: "Error during logout" });
+    if (!res.headersSent) {
+      res.status(500).json({
+        success: false,
+        message: "Error during logout"
+      });
+    }
   }
 };
 
@@ -151,5 +193,5 @@ module.exports = {
   setRefreshTokenInCookie,
   verifyAccessToken,
   refreshAccessToken,
-  logout
+  logout,
 };

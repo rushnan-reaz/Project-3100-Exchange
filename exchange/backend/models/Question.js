@@ -19,16 +19,33 @@ const QuestionSchema = mongoose.Schema({
     ref: 'User', 
     required:false, 
   },
-  likes: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null,
-  },
-  dislikes: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null,
-  },
+  likes:
+  [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  ],
+  //  {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   default: null,
+  // },
+  
+  dislikes: 
+  [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  ],
+  //  {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   default: null,
+  // },
   created_at: {
     type: Date,
     default: Date.now,

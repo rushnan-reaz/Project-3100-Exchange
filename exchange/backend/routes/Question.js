@@ -89,31 +89,45 @@ router.get("/", async (req, res) => {
 });
 
 // Fetch a specific question by ID
+// Fetch a specific question by ID
 router.get("/:id", async (req, res) => {
   try {
-    // Fetch the specific question with user details populated (ObjectId and username only)
+    // Fetch the specific question with user details populated
     const question = await QuestionDB.findById(req.params.id)
-      .populate("user", "_id username") // Populate the user for the question itself
+      .populate("user", "_id username")
       .lean();
 
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
     }
 
-    // Fetch related answers and populate user field for each answer
+    // Fetch and populate answers with their users and comments
     const answers = await AnswerDB.find({ question_id: question._id })
-      .populate("user", "_id username") // Populate user for each answer
+      .populate("user", "_id username")
       .lean();
 
-    // Fetch related comments (you can populate if necessary)
-    const comments = await CommentDB.find({ question_id: question._id }).lean();
+    // Fetch all comments for these answers
+    const answerIds = answers.map(answer => answer._id);
+    const comments = await CommentDB.find({ 
+      answer_id: { $in: answerIds } 
+    })
+    .populate("user", "_id username")
+    .lean();
 
-    // Return the enriched question data with populated answers and comments
+    // Map comments to their respective answers
+    const answersWithComments = answers.map(answer => ({
+      ...answer,
+      comments: comments.filter(comment => 
+        String(comment.answer_id) === String(answer._id)
+      )
+    }));
+
+    // Return enriched question data
     res.status(200).json({
       ...question,
-      comments,
-      answers,
+      answers: answersWithComments
     });
+
   } catch (error) {
     console.error("Error retrieving question:", error);
     res.status(500).json({ message: "Internal Server Error" });

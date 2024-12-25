@@ -20,15 +20,12 @@ function Questions() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    console.log("Auth state in Questions:", {
-      user,
-      isAuthenticated,
-      loading
-    });
+    console.log('History object:', history);
+    console.log('Auth state:', { user, isAuthenticated });
 
     if (!loading && !isAuthenticated) {
       console.log("User not authenticated, redirecting...");
-      // history.push('/login');
+      history.push('/login');
     }
   }, [user, isAuthenticated, loading, history]);
 
@@ -107,10 +104,12 @@ function Questions() {
         resetForm();
         if (window.confirm("Question posted successfully! View your question?")) {
           // history.push(`/question?q=${response.data.data._id}`);
-          history.push(`/`);
+          // history.push(`/`);
+          window.location.href = `/question?q=${response.data.data._id}`;
         } else {
           window.alert(" Question not posted successfully");
-          history.push("/add-question");
+          // history.push("/add-question");
+          window.location.href = '/';
         }
       }
     } catch (error) {
@@ -196,8 +195,7 @@ function Questions() {
           disabled={loading}
           type="submit"
           onClick={handleSubmit}
-          className="btn"
-        >
+          className="btn">
           {loading ? "Posting..." : "Post Question"}
         </button>
       </div>

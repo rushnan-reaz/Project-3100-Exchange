@@ -19,10 +19,12 @@ router.get('/', (req, res) => {
     res.send('Welcome to the backend API');
 });
 
-// ** Public Routes (No authentication needed) **
+
 router.use('/question', QuestionRouter);  // Route for handling questions
 router.use('/answer', AnswerRouter);      // Route for handling answers
 router.use('/comment', CommentRouter);    // Route for handling comments
+
+
 router.use('/register', RegisterRouter);  // Route for user registration
 router.use('/login', LoginRouter);        // Route for user login
 router.use('/verify-email', VerifyEmailRouter); // Email verification route
