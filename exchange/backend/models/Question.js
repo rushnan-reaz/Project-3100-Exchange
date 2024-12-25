@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const QuestionSchema = mongoose.Schema({
@@ -11,41 +10,33 @@ const QuestionSchema = mongoose.Schema({
     required: true,
   },
   tag: {
-    type: [String], 
+    type: [String],
     required: true,
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User', 
-    required:false, 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: false,
   },
-  likes:
-  [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-  ],
-  //  {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "User",
-  //   default: null,
-  // },
-  
-  dislikes: 
-  [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-  ],
-  //  {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "User",
-  //   default: null,
-  // },
+  likes: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    default: [],
+  },
+  dislikes: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    default: [],
+  },
+
   created_at: {
     type: Date,
     default: Date.now,

@@ -87,7 +87,7 @@
     align-items: center;
   }
   
-  .all-options .like1 {
+  .all-options .like1 .null {
     font-size: 24px;
     color: rgba(0, 0, 0, 0.4);
     cursor: pointer;
@@ -98,9 +98,13 @@
   .all-options .like1:hover {
     color: #00559A;
   }
+
+  .all-options .like1.active {
+    color: #00559A;;
+  }
   
 
-  .all-options .like2 {
+  .all-options .like2 .null {
     font-size: 24px;
     color: rgba(0, 0, 0, 0.4);
     cursor: pointer;
@@ -110,6 +114,10 @@
   
   .all-options .like2:hover {
     color: tomato;
+  }
+
+  .all-options .like2.active {
+    color:tomato;
   }
   
 

@@ -43,18 +43,20 @@ function MainQue() {
         // Transform and validate data
         const transformedData = {
           ...res.data,
-          answers: res.data.answers?.map((answer) => ({
-            ...answer,
-            comments: answer.comments
-              ?.filter(comment => comment && typeof comment === 'object')
-              .map((comment) => ({
-                _id: comment._id,
-                comment: comment.comment,
-                createdAt: comment.createdAt,
-                user: comment.user || { username: "Anonymous" },
-                answer_id: answer._id,
-              })) || []
-          })) || []
+          answers:
+            res.data.answers?.map((answer) => ({
+              ...answer,
+              comments:
+                answer.comments
+                  ?.filter((comment) => comment && typeof comment === "object")
+                  .map((comment) => ({
+                    _id: comment._id,
+                    comment: comment.comment,
+                    createdAt: comment.createdAt,
+                    user: comment.user || { username: "Anonymous" },
+                    answer_id: answer._id,
+                  })) || [],
+            })) || [],
         };
 
         console.log("Transformed data Mainque:", transformedData);
@@ -195,7 +197,95 @@ function MainQue() {
     }
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  const handleanswerLike = async (answerId) => {
+    if (!isAuthenticated || !user) {
+      alert("Please login to like answers");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `/api/answer/like/${answerId}`,
+        { userId: user._id },
+        { withCredentials: true }
+      );
+      if (response.data.status) {
+        updateAnswer();
+      }
+    } catch (error) {
+      console.error("Error liking answer:", error);
+      alert("Failed to like answer");
+    }
+  };
+
+  const handlequestionLike = async () => {
+    if (!isAuthenticated || !user) {
+      alert("Please login to like questions");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `/api/question/like/${question_id}`,
+        { userId: user._id },
+        { withCredentials: true }
+      );
+      if (response.data.status) {
+        // Refresh question data
+        const updatedQuestion = await axios.get(`/api/question/${question_id}`);
+        setQuestiondata(updatedQuestion.data);
+      }
+    } catch (error) {
+      console.error("Error liking question:", error);
+      alert("Failed to like question");
+    }
+  };
+
+  const handleanswerDislike = async (answerId) => {
+    if (!isAuthenticated || !user) {
+      alert("Please login to dislike answers");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `/api/answer/dislike/${answerId}`,
+        { userId: user._id },
+        { withCredentials: true }
+      );
+      if (response.data.status) {
+        updateAnswer();
+      }
+    } catch (error) {
+      console.error("Error disliking answer:", error);
+      alert("Failed to dislike answer");
+    }
+  };
+
+  const handlequestionDislike = async () => {
+    if (!isAuthenticated || !user) {
+      alert("Please login to dislike questions");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `/api/question/dislike/${question_id}`,
+        { userId: user._id },
+        { withCredentials: true }
+      );
+      if (response.data.status) {
+        // Refresh question data
+        const updatedQuestion = await axios.get(`/api/question/${question_id}`);
+        setQuestiondata(updatedQuestion.data);
+      }
+    } catch (error) {
+      console.error("Error disliking question:", error);
+      alert("Failed to dislike question");
+    }
+  };
+
+  // if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">Error: {error}</div>;
   if (!questiondata) return <div className="not-found">Question not found</div>;
 
@@ -225,12 +315,22 @@ function MainQue() {
           <div className="all-question-container">
             <div className="all-questions-left">
               <div className="all-options">
-                <p className="stat">0</p>
-                <p className="like1">
+                <p className="stat">{questiondata?.likes?.length || 0}</p>
+                <p
+                  className={`like1 ${
+                    questiondata?.likes?.includes(user?._id) ? "active" : ""
+                  }`}
+                  onClick={handlequestionLike}
+                >
                   <ThumbUpOffAltIcon />
                 </p>
-                <p className="stat">0</p>
-                <p className="like2">
+                <p className="stat">{questiondata?.dislikes?.length || 0}</p>
+                <p
+                  className={`like2 ${
+                    questiondata?.dislikes?.includes(user?._id) ? "active" : ""
+                  }`}
+                  onClick={handlequestionDislike}
+                >
                   <ThumbDownOffAltIcon />
                 </p>
               </div>
@@ -256,11 +356,21 @@ function MainQue() {
             <div className="all-questions-left">
               <div className="all-options">
                 <p className="stat">{answer?.likes?.length || 0}</p>
-                <p className="like1">
+                <p
+                  className={`like1 ${
+                    answer?.likes?.includes(user?._id) ? "active" : "null"
+                  }`}
+                  onClick={() => handleanswerLike(answer._id)}
+                >
                   <ThumbUpOffAltIcon />
                 </p>
                 <p className="stat">{answer?.dislikes?.length || 0}</p>
-                <p className="like2">
+                <p
+                  className={`like2 ${
+                    answer?.dislikes?.includes(user?._id) ? "active" : ""
+                  }`}
+                  onClick={() => handleanswerDislike(answer._id)}
+                >
                   <ThumbDownOffAltIcon />
                 </p>
               </div>
@@ -284,72 +394,76 @@ function MainQue() {
               </div>
 
               <div className="comments">
-        {Array.isArray(answer?.comments) && answer.comments.length > 0 ? (
-          answer.comments.map((comment) => {
-            console.log("Rendering comment:", answer.comments);
-            console.log("Comment user:", answer.comments.user);
-            console.log("Comment user username:", answer.comments.user?.username);
-            // Skip invalid comments
-            // if (!comment?._id || !comment?.comment) {
-            //   console.warn("Invalid comment data:", comment);
-            //   return null;
-            // }
+                {Array.isArray(answer?.comments) &&
+                answer.comments.length > 0 ? (
+                  answer.comments.map((comment) => {
+                    console.log("Rendering comment:", answer.comments);
+                    console.log("Comment user:", answer.comments.user);
+                    console.log(
+                      "Comment user username:",
+                      answer.comments.user?.username
+                    );
+                    // Skip invalid comments
+                    // if (!comment?._id || !comment?.comment) {
+                    //   console.warn("Invalid comment data:", comment);
+                    //   return null;
+                    // }
 
-            return (
-              <div key={comment._id} className="comment">
-                <p className="comment-text">
-                  {comment.comment}
-                  
-                  <span className="comment-author">
-                    {comment.user?.username
-                      ? ` - @${comment.user.username}`
-                      : " - Anonymous"}
-                  </span>
-                </p>
-                {comment.createdAt && (
-                  <small className="comment-date">
-                    {new Date(comment.createdAt).toLocaleString()}
-                  </small>
+                    return (
+                      <div key={comment._id} className="comment">
+                        <p className="comment-text">
+                          {comment.comment}
+
+                          <span className="comment-author">
+                            {comment.user?.username
+                              ? ` - @${comment.user.username}`
+                              : " - Anonymous"}
+                          </span>
+                        </p>
+                        {comment.createdAt && (
+                          <small className="comment-date">
+                            {new Date(comment.createdAt).toLocaleString()}
+                          </small>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="no-comments">No comments yet</p>
+                )}
+
+                <button
+                  className="comment-toggle"
+                  onClick={() => handleCommentClick(answer._id)}
+                >
+                  {commentVisibility[answer._id] ? "Cancel" : "Add Comment"}
+                </button>
+
+                {commentVisibility[answer._id] && (
+                  <div className="add-comment">
+                    <textarea
+                      value={commentStates[answer._id] || ""}
+                      onChange={(e) =>
+                        handleCommentChange(answer._id, e.target.value)
+                      }
+                      placeholder="Add your comment..."
+                      rows={3}
+                      disabled={commentLoading[answer._id]}
+                    />
+                    <button
+                      onClick={() => handleComment(answer._id)}
+                      disabled={commentLoading[answer._id]}
+                    >
+                      {commentLoading[answer._id]
+                        ? "Posting..."
+                        : "Post Comment"}
+                    </button>
+                  </div>
                 )}
               </div>
-            );
-          })
-        ) : (
-          <p className="no-comments">No comments yet</p>
-        )}
-
-        <button
-          className="comment-toggle"
-          onClick={() => handleCommentClick(answer._id)}
-        >
-          {commentVisibility[answer._id] ? "Cancel" : "Add Comment"}
-        </button>
-
-        {commentVisibility[answer._id] && (
-          <div className="add-comment">
-            <textarea
-              value={commentStates[answer._id] || ""}
-              onChange={(e) =>
-                handleCommentChange(answer._id, e.target.value)
-              }
-              placeholder="Add your comment..."
-              rows={3}
-              disabled={commentLoading[answer._id]}
-            />
-            <button
-              onClick={() => handleComment(answer._id)}
-              disabled={commentLoading[answer._id]}
-            >
-              {commentLoading[answer._id]
-                ? "Posting..."
-                : "Post Comment"}
-            </button>
+            </div>
           </div>
-        )}
-      </div>
-    </div>
-  </div>
-))}
+        ))}
 
         <div className="main-answer">
           <h3>Your Answer</h3>
