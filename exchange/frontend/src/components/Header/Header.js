@@ -47,7 +47,7 @@ function Header() {
   };
 
   return (
-    <header className="Header">
+    <header>
       <div className="Header-container">
         <div className="header-left">
           <Link to="/">
@@ -68,30 +68,32 @@ function Header() {
                 {/* <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar> */}
               </div>
 
-              <div className={`user-menu ${show ? 'show' : ''}`}>
-                <div className="user-info">
-                  <Link to="/profile" className="profile-link">
-                    <div className="profile-content">
-                      <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar>
-                      <span className="username">{user.username}</span>
-                    </div>
-                  </Link>
-                </div>
-                <ul className="menu-list">
-                  <li>
-                    <Link to="/inbox" className="menu-item">
-                      <InboxIcon />
-                      <span>Inbox</span>
+              {show && (
+                <div className="user-menu">
+                  <div className="user-info">
+                    <Link to="/profile" className="profile-link">
+                      <div className="profile-content">
+                        <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar>
+                        <span className="username">{user.username}</span>
+                      </div>
                     </Link>
-                  </li>
-                  <li>
-                    <div className="menu-item" onClick={handleLogout}>
-                      <LogoutIcon />
-                      <span>Logout</span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+                  </div>
+                  <ul className="menu-list">
+                    <li>
+                      <Link to="/inbox" className="menu-item">
+                        <InboxIcon />
+                        <span>Inbox</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="menu-item" onClick={handleLogout}>
+                        <LogoutIcon />
+                        <span>Logout</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
           ) : (
             <Link to="/login" className="login-button">

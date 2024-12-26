@@ -11,7 +11,7 @@ const SideBar = () => {
       <div className="sidebar-container">
         <div className="sidebar-options">
           <div className="sidebar-options">
-            <Link to="/">Home</Link>
+            <Link href="#home">Home</Link>
           </div>
           <div className="sidebar-options">
             <p>PUBLIC</p>

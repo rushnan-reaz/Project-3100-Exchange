@@ -285,9 +285,9 @@ function MainQue() {
     }
   };
 
-  if (loading) return <div className="main">Loading...</div>;
-  if (error) return <div className="main">Error: {error}</div>;
-  if (!questiondata) return <div className="main">Question not found</div>;
+  // if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+  if (!questiondata) return <div className="not-found">Question not found</div>;
 
   return (
     <div className="main">
@@ -348,98 +348,96 @@ function MainQue() {
           </div>
         </div>
 
-        <div className="all-answers">
+        <div className="all-questions">
           <p>Total answers = {questiondata?.answers?.length || 0}</p>
         </div>
-
-        <div className="answers-container">
-          {questiondata?.answers?.map((answer) => (
-            <div key={answer._id} className="all-answer-container">
-              <div className="all-questions-left">
-                <div className="all-options">
-                  <p className="stat">{answer?.likes?.length || 0}</p>
-                  <p
-                    className={`like1 ${
-                      answer?.likes?.includes(user?._id) ? "active" : "null"
-                    }`}
-                    onClick={() => handleanswerLike(answer._id)}
-                  >
-                    <ThumbUpOffAltIcon />
-                  </p>
-                  <p className="stat">{answer?.dislikes?.length || 0}</p>
-                  <p
-                    className={`like2 ${
-                      answer?.dislikes?.includes(user?._id) ? "active" : ""
-                    }`}
-                    onClick={() => handleanswerDislike(answer._id)}
-                  >
-                    <ThumbDownOffAltIcon />
-                  </p>
+        {questiondata?.answers?.map((answer) => (
+          <div key={answer._id} className="all-question-container">
+            <div className="all-questions-left">
+              <div className="all-options">
+                <p className="stat">{answer?.likes?.length || 0}</p>
+                <p
+                  className={`like1 ${
+                    answer?.likes?.includes(user?._id) ? "active" : "null"
+                  }`}
+                  onClick={() => handleanswerLike(answer._id)}
+                >
+                  <ThumbUpOffAltIcon />
+                </p>
+                <p className="stat">{answer?.dislikes?.length || 0}</p>
+                <p
+                  className={`like2 ${
+                    answer?.dislikes?.includes(user?._id) ? "active" : ""
+                  }`}
+                  onClick={() => handleanswerDislike(answer._id)}
+                >
+                  <ThumbDownOffAltIcon />
+                </p>
+              </div>
+            </div>
+            <div className="all-questions-right">
+              <p>{ReactHtmlParser(answer?.answer)}</p>
+              <div className="author">
+                <small className="date">
+                  Answered on:
+                  <span>
+                    {new Date(answer?.createdAt).toLocaleDateString()}
+                  </span>
+                  <span>
+                    {new Date(answer?.createdAt).toLocaleTimeString()}
+                  </span>
+                </small>
+                <div className="author-info">
+                  <Avatar />
+                  <p>{answer.user?.username || "Anonymous"}</p>
                 </div>
               </div>
-              <div className="all-questions-right">
-                <p>{ReactHtmlParser(answer?.answer)}</p>
-                <div className="author">
-                  <small className="date">
-                    Answered on:
-                    <span>
-                      {new Date(answer?.createdAt).toLocaleDateString()}
-                    </span>
-                    <span>
-                      {new Date(answer?.createdAt).toLocaleTimeString()}
-                    </span>
-                  </small>
-                  <div className="author-info">
-                    <Avatar />
-                    <p>{answer.user?.username || "Anonymous"}</p>
-                  </div>
-                </div>
 
-                <div className="comments">
-                  {Array.isArray(answer?.comments) &&
-                  answer.comments.length > 0 ? (
-                    answer.comments.map((comment) => {
-                      console.log("Rendering comment:", answer.comments);
-                      console.log("Comment user:", answer.comments.user);
-                      console.log(
-                        "Comment user username:",
-                        answer.comments.user?.username
-                      );
-                      // Skip invalid comments
-                      // if (!comment?._id || !comment?.comment) {
-                      //   console.warn("Invalid comment data:", comment);
-                      //   return null;
-                      // }
+              <div className="comments">
+                {Array.isArray(answer?.comments) &&
+                answer.comments.length > 0 ? (
+                  answer.comments.map((comment) => {
+                    console.log("Rendering comment:", answer.comments);
+                    console.log("Comment user:", answer.comments.user);
+                    console.log(
+                      "Comment user username:",
+                      answer.comments.user?.username
+                    );
+                    // Skip invalid comments
+                    // if (!comment?._id || !comment?.comment) {
+                    //   console.warn("Invalid comment data:", comment);
+                    //   return null;
+                    // }
 
-                      return (
-                        <div key={comment._id} className="comment">
-                          <p className="comment-text">
-                            {comment.comment}
+                    return (
+                      <div key={comment._id} className="comment">
+                        <p className="comment-text">
+                          {comment.comment}
 
-                            <span className="comment-author">
-                              {comment.user?.username
-                                ? ` - @${comment.user.username}`
-                                : " - Anonymous"}
-                            </span>
-                          </p>
-                          {comment.createdAt && (
-                            <small className="comment-date">
-                              {new Date(comment.createdAt).toLocaleString()}
-                            </small>
-                          )}
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <p className="no-comments">No comments yet</p>
-                  )}
-                </div>
-                <div
+                          <span className="comment-author">
+                            {comment.user?.username
+                              ? ` - @${comment.user.username}`
+                              : " - Anonymous"}
+                          </span>
+                        </p>
+                        {comment.createdAt && (
+                          <small className="comment-date">
+                            {new Date(comment.createdAt).toLocaleString()}
+                          </small>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="no-comments">No comments yet</p>
+                )}
+
+                <button
                   className="comment-toggle"
                   onClick={() => handleCommentClick(answer._id)}
                 >
                   {commentVisibility[answer._id] ? "Cancel" : "Add Comment"}
-                </div>
+                </button>
 
                 {commentVisibility[answer._id] && (
                   <div className="add-comment">
@@ -464,23 +462,21 @@ function MainQue() {
                 )}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
         <div className="main-answer">
           <h3>Your Answer</h3>
           <ReactQuill
             value={answer}
             onChange={handleAnswer}
-            className="quill"
+            className="Quill"
             theme="snow"
             placeholder="Write your answer here..."
           />
-          <div className="button-container">
-            <button type="submit" onClick={handleSubmit}>
-              Post Answer
-            </button>
-          </div>
+          <button type="submit" onClick={handleSubmit}>
+            Post Answer
+          </button>
         </div>
       </div>
     </div>

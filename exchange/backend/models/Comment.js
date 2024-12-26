@@ -26,13 +26,4 @@ const CommentSchema = new mongoose.Schema({
   }
 });
 
-CommentSchema.pre('save', async function(next) {
-  if (this.isNew) {
-    const user = await User.findById(this.user);
-    const userTimezone = user.timezone || 'UTC'; // Default to UTC if no timezone is set
-    this.createdAt = moment().tz(userTimezone).toDate();
-  }
-  next();
-});
-
 module.exports = mongoose.model('Comment', CommentSchema);

@@ -43,13 +43,4 @@ const QuestionSchema = mongoose.Schema({
   },
 });
 
-QuestionSchema.pre('save', async function(next) {
-  if (this.isNew) {
-    const user = await User.findById(this.user);
-    const userTimezone = user.timezone || 'UTC'; 
-    this.created_at = moment().tz(userTimezone).toDate();
-  }
-  next();
-});
-
 module.exports = mongoose.model("Question", QuestionSchema);
