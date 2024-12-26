@@ -2,8 +2,10 @@
     display: flex;
     position: sticky;
     top: 0;
-    z-index: 100000;
+    z-index: 1000;
     min-height: 5vh;
+    background-color: whitesmoke;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
 }
 
 .Header-container {
@@ -12,7 +14,7 @@
     align-items: center;
     width: 100%;
     justify-content: space-around;
-    box-shadow: 0 0.5px 8px rgba(0, 0, 0, 0.178);
+    /* box-shadow: 0 0.5px 8px rgba(0, 0, 0, 0.178); */
 }
 
 .header-left {
@@ -39,37 +41,64 @@
     align-items: center;
     padding: 5px 20% 5px 0%;
     width: 30%;
+    /* background-color: #0095ff; */
+}
+
+.header-mid form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
 }
 
 .header-mid input[type="text"] {
-    align-content: start;
-    background: transparent;
-    text-align: left;
-    width: 300px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.178);
-    border-radius: 5px;
-    transition: width 1s ease-in-out;
-    padding: 5px;
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+    width: 200px;
 }
 
 .header-mid input[type="text"]:focus {
-    width: 100%;
+    outline: none;
+    border-color: #0095ff;
+    box-shadow: 0 0 0 2px rgba(0, 149, 255, 0.1);
 }
 
-.header-mid .MuiSvgIcon-root {
-    color: slategrey;
-    transition: .2s ease-in-out;
+.header-mid button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #666;
+    transition: all 0.2s ease;
+    margin: auto;
 }
 
-.header-mid .MuiSvgIcon-root:hover {
-    color: black;
+.header-mid button:hover {
+    background-color: transparent;
 }
+
+.header-mid .SearchIcon {
+    color: #666;
+    font-size: 20px;
+    transition: color 0.2s ease;
+}
+
+.header-mid button:hover .SearchIcon {
+    color: #0095ff;
+}
+
+
 
 .header-right {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0px 10% 0px 0%;
+    padding: 10px 10% 10px 5%;
     position: relative; /* Ensure the dropdown is positioned relative to this container */
 }
 
@@ -79,7 +108,7 @@
     justify-content: space-between;
     width: 100%;
     padding: 0;
-  }
+}
 
 .header-right-container > .MuiSvgIcon-root {
     color: black;
@@ -100,51 +129,63 @@
 .user-menu {
     position: absolute;
     top: 100%;
-    right: 0; 
+    right: 0;
     width: 240px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     padding: 8px 0;
-    z-index: 1000;
+    z-index: 999;
+    visibility: hidden; 
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;  
+}
+
+.user-menu.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto; 
 }
 
 .user-info {
     padding: 12px 16px;
     border-bottom: 1px solid #eee;
-  }
+}
 
 .user-info:hover {
     background-color: rgba(0,0,0,0.04);
-  }
-  
-  .profile-link {
+}
+
+.profile-link {
     text-decoration: none;
     color: inherit;
     width: 100%;
     display: block;
-  }
-  
-  .profile-content {
+}
+
+.profile-content {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 4px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
-  }
-  
-  /* .profile-content:hover {
+}
+
+.profile-content:hover {
     background-color: rgba(0,0,0,0.04);
-  } */
-  
-  .username {
+}
+
+.username {
     font-size: 14px;
     color: #444;
     font-weight: 500;
-  }
+}
 
-  .user-menu ul {
+.user-menu ul {
     display: flex;
     flex-direction: column;  
     padding: 0;
@@ -171,7 +212,7 @@
     color: #333;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .user-menu ul li:hover a,
@@ -197,4 +238,17 @@
 
 .login-button:hover {
     background-color: #0077cc;
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .header-mid {
+        padding: 5px;
+        width: 50%;
+    }
+
+    .header-mid input[type="text"] {
+        min-width: 200px;
+    }
 }

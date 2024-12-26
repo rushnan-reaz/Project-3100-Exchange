@@ -285,9 +285,9 @@ function MainQue() {
     }
   };
 
-  // if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!questiondata) return <div className="not-found">Question not found</div>;
+  if (loading) return <div className="main">Loading...</div>;
+  if (error) return <div className="main">Error: {error}</div>;
+  if (!questiondata) return <div className="main">Question not found</div>;
 
   return (
     <div className="main">
@@ -348,9 +348,11 @@ function MainQue() {
           </div>
         </div>
 
-        <div className="all-questions">
+        <div className="all-answers">
           <p>Total answers = {questiondata?.answers?.length || 0}</p>
         </div>
+        
+        <div className="answers-container">
         {questiondata?.answers?.map((answer) => (
           <div key={answer._id} className="all-question-container">
             <div className="all-questions-left">
@@ -432,12 +434,13 @@ function MainQue() {
                   <p className="no-comments">No comments yet</p>
                 )}
 
-                <button
+</div>
+                <div
                   className="comment-toggle"
                   onClick={() => handleCommentClick(answer._id)}
                 >
                   {commentVisibility[answer._id] ? "Cancel" : "Add Comment"}
-                </button>
+                  </div>
 
                 {commentVisibility[answer._id] && (
                   <div className="add-comment">
@@ -462,23 +465,26 @@ function MainQue() {
                 )}
               </div>
             </div>
-          </div>
+   
         ))}
+         </div>
 
         <div className="main-answer">
           <h3>Your Answer</h3>
           <ReactQuill
             value={answer}
             onChange={handleAnswer}
-            className="Quill"
+            className="quill"
             theme="snow"
             placeholder="Write your answer here..."
           />
+          <div className="button-container">
           <button type="submit" onClick={handleSubmit}>
             Post Answer
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }

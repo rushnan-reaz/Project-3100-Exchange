@@ -66,6 +66,13 @@
   .all-questions {
     margin-top: 20px;
   }
+
+  .all-answers {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    align-items: center;
+  }
   
   .all-question-container {
     display: flex;
@@ -160,30 +167,88 @@
     font-weight: bold;
   }
   
-  /* .comments p {
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.7);
-  } */
+  /* Add answers container styles */
+.answers-container {
+  max-height: 1500px;
+  overflow-y: auto;
+  margin: 20px 0;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: grey #f1f1f1;
+}
+/* Chrome/Safari/Edge scrollbar for answers */
+.answers-container::-webkit-scrollbar {
+  width: 8px;
+}
 
-  .text-link{
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.7);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+.answers-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 20px;
+  margin: 5px 0;
+}
 
-  .text-link:hover{
-    font-size: 14px;
-    color: #007cd4;
-    
-  }
+.answers-container::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 20px;
+  border: 2px solid #f1f1f1;
+}
+
+.answers-container::-webkit-scrollbar-thumb:hover {
+  background-color: darkgray;
+}
+
+
+.all-answer-container {
+  display: flex;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
   
   /* Comment styles */
   .comments {
-    margin-top: 1rem;
-    border-left: 2px solid #e0e0e0;
-    padding-left: 1rem;
+    /* Firefox scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: grey #f1f1f1;
+  /* Add padding for scrollbar space */
+  padding-right: 8px;
+  /* Ensure consistent sizing */
+  max-height: 200px;
+  min-height: 100px;
+  overflow-y: auto;
+}
+
+/* Firefox specific styles using @supports */
+@supports (scrollbar-color: grey #f1f1f1) {
+  .comments {
+    scrollbar-width: thin;
+    scrollbar-color: grey #f1f1f1;
+    border-radius: 20px;
   }
+}
+
+/* Chrome/Safari/Edge scrollbar */
+.comments::-webkit-scrollbar {
+  width: 8px;
+}
+
+.comments::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 20px;
+  margin: 5px 0;
+}
+
+.comments::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 20px;
+  border: 2px solid #f1f1f1;
+}
+
+.comments::-webkit-scrollbar-thumb:hover {
+  background-color: darkgray;
+}
   
   .comment {
     padding: 0.5rem;
@@ -228,10 +293,13 @@
     cursor: pointer;
     padding: 0;
     margin: 0.5rem 0;
+    font-size: 14px;
+    transition: color 0.3s ease; 
   }
   
   .comment-toggle:hover {
     text-decoration: underline;
+    color: #007bff; 
   }
   
  
@@ -240,6 +308,9 @@
   /* Answer section styles */
   .main-answer {
     margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
   
   .main-answer h3 {
@@ -247,27 +318,40 @@
     margin-bottom: 10px;
   }
   
-  .main-answer .ql-container {
-    min-height: 200px;
-    background-color: white;
-    border-radius: 5px;
+  .main-answer .quill {
+    height: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .main-answer .quill .ql-container {
+    min-height: 150px;
+    border-radius: 0 0 5px 5px;
+  }
+  
+  .main-answer .quill .ql-toolbar {
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .main-answer .button-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
   
   /* General button styles */
   .main-answer button {
     background-color: #0095ff;
-    padding: 10px 10px;
-    margin-top: 10px;
-    border: 2px solid #007cd446;
+    padding: 10px 20px;
+    border: none;
     color: #fff;
     outline: none;
     width: 200px;
     border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 200px;
   }
   
-  .main-answer button:hover {
+  /* .main-answer button:hover {
     background-color: #0056b3;
   }
 
@@ -275,7 +359,7 @@
     top: 2px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transform: scale(0.99) translateY(1px);
-  }
+  } */
   
   .all-options .icons{
     font-size: 24px;

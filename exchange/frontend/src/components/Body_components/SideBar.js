@@ -11,14 +11,14 @@ const SideBar = () => {
       <div className="sidebar-container">
         <div className="sidebar-options">
           <div className="sidebar-options">
-            <Link href="#home">Home</Link>
+          <Link to="/">Home</Link>
           </div>
           <div className="sidebar-options">
             <p>PUBLIC</p>
             <div className="Link">
               <div className="Link-tag">
                 <Public />
-                <Link href="#questions">Questions</Link>
+                <Link to="/">Questions</Link>
               </div>
               <div className="tag">
                 <p>Tags</p>
@@ -32,7 +32,7 @@ const SideBar = () => {
             <div className="Link">
               <div className="Link-tag">
                 <Stars />
-                <Link href="#explore-collectives">Explore Collectives</Link>
+                <Link to="/">Explore Collectives</Link>
               </div>
             </div>
           </div>
@@ -41,7 +41,7 @@ const SideBar = () => {
             <p>FIND A JOB</p>
             <div className="Link">
               <div className="Link-tag">
-                <Link href="#question">Question</Link>
+              <Link to="/">Question</Link>
               </div>
               <div className="tag">
                 <p>Jobs</p>
@@ -56,7 +56,7 @@ const SideBar = () => {
             <div className="Link">
               <div className="Link-tag">
                 <Work />
-                <Link href="#companies">Companies</Link>
+                <Link to="/">Companies</Link>
               </div>
               <div className="tag">
                 <p>Tags</p>

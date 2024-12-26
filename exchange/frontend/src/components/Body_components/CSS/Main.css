@@ -1,3 +1,4 @@
+/* Main Container */
 .main {
     display: flex;
     padding: 30px 10px;
@@ -5,12 +6,13 @@
     flex-direction: column;
 }
 
-.main-container{
+.main-container {
     display: flex;
     flex-direction: column;
-    /*padding: 10px;*/
     width: 100%;
 }
+
+/* Top Section */
 .main-top {
     display: flex;
     flex-direction: row;
@@ -19,7 +21,6 @@
     margin-bottom: 10px;
     border-bottom: 1px solid #e0e0e0;
     width: 100%;
-    /*background-color: royalblue;*/
     align-items: center;
 }
 
@@ -27,13 +28,12 @@
     font-size: 25px;
     font-weight: 400;
     color: rgba(0,0,0,0.8);
-    /*background-color: aquamarine;*/
 }
 
 .main-top button {
     background-color: #0095ff;
     padding: 10px;
-    border: 2px solid #007cd446 ;
+    border: 2px solid #007cd446;
     color: #fff;
     outline: none;
     border-radius: 3px;
@@ -44,93 +44,175 @@
     scale: 1.02;
 }
 
-.main-dec{
+/* Description Section */
+.main-dec {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0 0 0 0px;
+    padding: 0;
     margin-bottom: 10px;
     color: rgba(0,0,0,0.8);
     width: 100%;
     border-bottom: 1px solid #e0e0e0;
-
-    /* background-color: aqua; */
 }
 
-.main-filter{
+/* Filter Section */
+.main-filter {
     display: flex;
     align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
-.main-tabs{
+.filter-container {
     display: flex;
-    margin-right: 50px;
-    border: 1px solid rgba(0,0,0,0.4);
-    border-radius: 2px;
-    padding: 0 5px 0 0;
-    /*background-color: #007cd446;*/
+    gap: 15px;
     align-items: center;
-
+    justify-content: center;
 }
 
-.main-tab{
-    padding: 5px;
-    text-decoration: none;
-    /*background-color: antiquewhite;*/
-}
-
-
-.main-filter-item{
+.main-filter-item {
     display: flex;
-    padding:0 5px 0 0;
+    padding: 1px 5px;
     border: 1px solid #0095ff;
-    border-radius: 4px;
+    border-radius: 10px;
     background-color: #007cd446;
     font-size: small;
     align-items: center;
+    justify-content: center;
     color: #007cd4;
     cursor: pointer;
-    margin-right: 20px;
+    position: relative;
+    gap: 8px;
 }
 
-.main-filter-item:hover{
+.main-filter-item:hover {
     scale: 1.02;
 }
 
+/* Dropdown Menu */
+.filter-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    width: 150px;
+    padding: 10px;
+}
 
-.questions{
+.filter-dropdown.show {
+    display: block;
+}
+
+.filter-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.filter-dropdown ul li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.filter-dropdown ul li:hover {
+    background-color: rgba(0,0,0,0.04);
+}
+
+/* Limit Options */
+.limit-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.limit-options button {
+    padding: 2px 8px;
+    border: 1px solid #0095ff;
+    background: transparent;
+    color: #007cd4;
+    border-radius: 3px;
+    cursor: pointer;
+    min-width: 40px;
+    text-align: center;
+}
+
+.limit-options button.active {
+    background: #0095ff;
+    color: white;
+}
+
+.limit-options button:hover {
+    background-color: #007cd446;
+}
+
+/* Questions Section */
+.questions {
     display: flex;
     flex-direction: column;
     width: 100%;
-    /*background-color: blue;*/
 }
 
-.question{
+.question {
     display: flex;
     flex-direction: column;
     padding: 15px 0;
-    /* border-bottom: 1px solid #e0e0e0; */
     width: 100%;
-    /*background-color: red;*/
 }
 
-
-.main-tabs a {
-    text-decoration: none; /* Removes underline */
-    color: rgba(0,0,0, 0.4); /* Sets the color */
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
 }
 
-.main-tabs a:hover {
-    color: black;
+.pagination button {
+    padding: 8px 12px;
+    border: 1px solid #0095ff;
+    background: white;
+    color: #0095ff;
+    border-radius: 4px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
+.pagination button:hover:not(:disabled) {
+    background: #0095ff;
+    color: white;
+}
 
+.pagination button.active {
+    background: #0095ff;
+    color: white;
+}
 
+.pagination button:disabled {
+    border-color: #ccc;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Loading State */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+/* Media Queries */
 @media screen and (min-width: 768px) {
     .main {
         flex: 0.6;
     }
-
 }

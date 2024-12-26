@@ -27,7 +27,7 @@ function Allquestions({ question }) {
         <div className={"all-q-left"}>
           <div className={"all-options"}>
             <div className={"all-option"}>
-              <p>0</p>
+            <p>{question?.likes?.length || 0}</p>
               <span>likes</span>
             </div>
             <div className={"all-option"}>

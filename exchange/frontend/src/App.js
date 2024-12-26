@@ -11,11 +11,13 @@ import VerifyEmail from "./components/Verified/verification.js";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthProvider } from "./context/authcontext.js";
+import { SearchProvider } from "./context/searchcontext.js";
 import ProtectedRoute from "./components/Protected/Protected.js";
 
 function App() {
   return (
     <Router>
+      <SearchProvider>
       <AuthProvider>
         <div className="App">
           <Header />
@@ -36,6 +38,7 @@ function App() {
           </Switch>
         </div>
       </AuthProvider>
+      </SearchProvider>
     </Router>
   );
 }

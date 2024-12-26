@@ -13,12 +13,15 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useHistory } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authcontext.js";
+import { SearchContext } from "../../context/searchcontext.js";
 
 function Header() {
   const { user, logout } = useContext(AuthContext);
   const history = useHistory();
   const [show, setShow] = useState(false);
   const menuRef = useRef();
+  const [searchQuery, setSearchQuery] = useState("");
+  const { setGlobalSearch, setForceRefresh } = useContext(SearchContext);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -46,18 +49,47 @@ function Header() {
     setShow(!show);
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setGlobalSearch(searchQuery.trim());
+      history.push({
+        pathname: '/',
+        search: `?search=${encodeURIComponent(searchQuery.trim())}`
+      });
+    }
+  };
+
+ 
+  
+  const handleLogoClick = () => {
+    setSearchQuery(""); // Clear local search
+    setGlobalSearch(""); // Clear global search
+    setForceRefresh(true); // Force refresh
+    history.replace("/");
+  };
+
   return (
-    <header>
+    <header className="Header">
       <div className="Header-container">
         <div className="header-left">
-          <Link to="/">
+        <Link to="/" onClick={handleLogoClick}>
             <img className="logo" src={logo_light} alt="logo" />
           </Link>
         </div>
 
         <div className="header-mid">
-          <input type="text" placeholder="Search..." />
-          <SearchIcon className="SearchIcon" />
+          <form onSubmit={handleSearch}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search"
+            />
+            <button type="submit">
+              <SearchIcon className="SearchIcon" />
+            </button>
+          </form>
         </div>
 
         <div className="header-right" ref={menuRef}>
@@ -68,32 +100,30 @@ function Header() {
                 {/* <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar> */}
               </div>
 
-              {show && (
-                <div className="user-menu">
-                  <div className="user-info">
-                    <Link to="/profile" className="profile-link">
-                      <div className="profile-content">
-                        <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar>
-                        <span className="username">{user.username}</span>
-                      </div>
-                    </Link>
-                  </div>
-                  <ul className="menu-list">
-                    <li>
-                      <Link to="/inbox" className="menu-item">
-                        <InboxIcon />
-                        <span>Inbox</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <div className="menu-item" onClick={handleLogout}>
-                        <LogoutIcon />
-                        <span>Logout</span>
-                      </div>
-                    </li>
-                  </ul>
+              <div className={`user-menu ${show ? "show" : ""}`}>
+                <div className="user-info">
+                  <Link to="/profile" className="profile-link">
+                    <div className="profile-content">
+                      <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar>
+                      <span className="username">{user.username}</span>
+                    </div>
+                  </Link>
                 </div>
-              )}
+                <ul className="menu-list">
+                  <li>
+                    <Link to="/inbox" className="menu-item">
+                      <InboxIcon />
+                      <span>Inbox</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <div className="menu-item" onClick={handleLogout}>
+                      <LogoutIcon />
+                      <span>Logout</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
           ) : (
             <Link to="/login" className="login-button">
