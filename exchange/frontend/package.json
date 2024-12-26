@@ -62,5 +62,11 @@
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0"
+  },
+  "devServer": {
+    "allowedHosts": [
+      "localhost",
+      "127.0.0.1"
+    ]
   }
 }

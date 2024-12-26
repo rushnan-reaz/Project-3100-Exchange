@@ -73,11 +73,14 @@ const UserSchema = new mongoose.Schema({
   //   enum: ['user', 'admin'], // Define roles
   //   default: 'user', // Default role
   // },
+  timezone: {
+    type: String,
+    default: 'UTC', 
+  },
 }, {
   timestamps: true, // Automatically adds `createdAt` and `updatedAt`
 });
 
-// Pre-save hook to ensure usernames are unique based on a naming convention
 UserSchema.pre('save', function (next) {
   this.username = `${this.studentId}_${this.firstname}`.toLowerCase();
   next();

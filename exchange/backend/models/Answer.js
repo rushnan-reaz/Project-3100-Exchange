@@ -46,4 +46,13 @@ const AnswerSchema = new mongoose.Schema({
   ],
 });
 
+AnswerSchema.pre('save', async function(next) {
+  if (this.isNew) {
+    const user = await User.findById(this.user);
+    const userTimezone = user.timezone || 'UTC'; // Default to UTC if no timezone is set
+    this.createdAt = moment().tz(userTimezone).toDate();
+  }
+  next();
+});
+
 module.exports = mongoose.model("Answer", AnswerSchema);
