@@ -38,7 +38,7 @@ function Main() {
 
 
   const fetchQuestions = useCallback(async () => {
-    console.log("Fetching questions for page:", currentPage, "search:", search);
+    console.log("Fetching questions for page:", currentPage, "limit:", limit);
     setIsLoading(true);
     try {
       const response = await axios.get("/api/question", {
@@ -49,35 +49,34 @@ function Main() {
           search: search,
         },
       });
-
-      console.log("API Response:", response.data);
-
+  
       if (response.data) {
-        console.log(
-          "Setting questions:",
-          response.data.questions?.length || 0,
-          "items"
-        );
         setQuestions(response.data.questions || []);
         setTotalPages(response.data.totalPages || 0);
         setTotalQuestions(response.data.totalQuestions || 0);
+        console.log("Pagination info:", {
+          currentPage,
+          totalPages: response.data.totalPages,
+          totalQuestions: response.data.totalQuestions
+        });
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
-      console.log("Error details:", error.response?.data);
       setQuestions([]);
+      setTotalPages(0);
+      setTotalQuestions(0);
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, sortBy, limit, search]);
+  }, [currentPage, limit, sortBy, search]);
 
   useEffect(() => {
     console.log("useEffect triggered, fetching questions...");
     fetchQuestions();
-  }, [fetchQuestions]);
+  }, [fetchQuestions, currentPage]);
 
   const paginate = (pageNumber) => {
-    console.log("Pagination requested:", { from: currentPage, to: pageNumber });
+    console.log("Paginating to:", pageNumber);
     setCurrentPage(pageNumber);
     window.scrollTo(0, 0);
   };
@@ -107,17 +106,9 @@ function Main() {
     } else {
       setSearch("");
     }
-
+  
     console.log("Search query changed:", searchQuery);
-    // Trigger fetch when search changes
-    fetchQuestions();
-
-    return () => {
-      // Cleanup function
-      setQuestions([]);
-      setCurrentPage(1);
-    };
-  }, [location.search, fetchQuestions]);
+  }, [location.search]);
 
 
   useEffect(() => {
