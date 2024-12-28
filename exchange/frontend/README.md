@@ -156,9 +156,6 @@ Project 3100T Exchange is a web application designed to facilitate question and 
 
 ## Folder Structure
 
-
-## Environment Variables
-
 ```
     frontend
     |
