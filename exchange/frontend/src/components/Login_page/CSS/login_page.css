@@ -82,4 +82,10 @@
   .toggle-form:hover {
     text-decoration: underline;
   }
-  
+  .helper-text {
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+    font-style: italic;
+  }

@@ -28,7 +28,9 @@ const RegisterForm = ({ setMessage, setIsRegister }) => {
       const result = await response.json();
 
       if (response.ok) {
-        setMessage("Registration successful! Please check your email for verification.");
+        setMessage(
+          "Registration successful! Please check your email for verification."
+        );
         setIsRegister(false); // Switch to login form
         setRegisterData({
           firstName: "",
@@ -57,6 +59,9 @@ const RegisterForm = ({ setMessage, setIsRegister }) => {
           onChange={handleRegisterChange}
           required
         />
+        <small className="helper-text">
+          This will be added to your username
+        </small>
       </div>
       <div className="input-field">
         <p>Last Name</p>

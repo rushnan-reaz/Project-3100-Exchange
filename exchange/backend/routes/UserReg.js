@@ -30,7 +30,7 @@ const sendVerificationEmail = async (email, token) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Verify Your Email Address',
-    text: `Hello,\n\nPlease verify your email by clicking the link below:\n\n${verificationUrl}\n\nBest regards,\nThe Team`,
+    text: `Hello,\n\nPlease verify your email by clicking the link below:\n\n${verificationUrl}\n\nLink will be expired after 5 minutes.\n\nBest regards,\nThe Team`,
   };
 
   try {
@@ -43,7 +43,7 @@ const sendVerificationEmail = async (email, token) => {
 
 // Registration route
 router.post('/', async (req, res) => {
-  console.log('Received registration data:', req.body); // Log incoming request body for debugging
+  console.log('Received registration data:', req.body); 
 
   try {
     const { firstName, lastName, department, studentId, email, password } = req.body;
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
     if (!firstName || !lastName || !department || !studentId || !email || !password) {
       return res.status(400).json({
         message: 'All fields are required.',
-        receivedFields: Object.keys(req.body), // Log the fields that were actually received
+        receivedFields: Object.keys(req.body),
       });
     }
 
@@ -74,7 +74,7 @@ router.post('/', async (req, res) => {
 
     // Generate email verification token
     const emailToken = crypto.randomBytes(32).toString('hex');
-    const emailTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // Token expires in 24 hours
+    const emailTokenExpires = Date.now() + 5 * 60 * 1000; // 5 hrs
 
     // Create new user
     const newUser = new User({

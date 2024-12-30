@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Department is required'],
     enum: {
-      values: ['CSE', 'EEE', 'ETE', 'ECE'], // Add more departments as needed
+      values: ['CSE', 'EEE', 'ETE', 'ECE'],
       message: 'Invalid department',
     },
   },
@@ -73,15 +73,48 @@ const UserSchema = new mongoose.Schema({
   //   enum: ['user', 'admin'], // Define roles
   //   default: 'user', // Default role
   // },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 300 // 5 minutes in seconds
+  }
 }, {
-  timestamps: true, // Automatically adds `createdAt` and `updatedAt`
+  timestamps: true, 
 });
 
-// Pre-save hook to ensure usernames are unique based on a naming convention
+// naming convention
 UserSchema.pre('save', function (next) {
   this.username = `${this.studentId}_${this.firstname}`.toLowerCase();
   next();
 });
+
+
+UserSchema.pre('save', async function(next) {
+  console.log('Pre-save hook triggered for user:', this._id);
+  
+  // Set username
+  this.username = `${this.studentId}_${this.firstname}`.toLowerCase();
+  
+  // If user is new and not verified, set TTL
+  if (this.isNew && !this.isVerified) {
+    console.log('Setting TTL for new unverified user:', this._id);
+    this.createdAt = new Date();
+  }
+  
+  // If user becomes verified, remove TTL
+  if (this.isVerified) {
+    console.log('User verified, removing TTL:', this._id);
+    this.createdAt = undefined;
+  }
+  
+  next();
+});
+
+
+UserSchema.index(
+  { createdAt: 1 }, 
+  { expireAfterSeconds: 300, partialFilterExpression: { isVerified: false } }
+);
 
 const User = mongoose.model('User', UserSchema);
 

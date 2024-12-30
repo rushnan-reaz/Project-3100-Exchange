@@ -122,7 +122,7 @@ const refreshAccessToken = async (req, res) => {
 const logout = async (req, res) => {
   console.log("Processing logout request...");
 
-  // If headers already sent, exit early
+
   if (res.headersSent) {
     console.warn("Headers already sent, skipping logout response");
     return;
@@ -162,7 +162,7 @@ const logout = async (req, res) => {
       });
     }
 
-    // Send single response based on success/failure
+    
     if (!res.headersSent) {
       if (hasError) {
         res.status(500).json({

@@ -7,7 +7,7 @@ const db = require('./db');
 const apirouter = require('./routes/Index');
 const { sessionMiddleware, logSession } = require('./middleware/session');
 const authenticate = require('./middleware/authenticate');
-const helmet = require('helmet'); // Add helmet for security headers
+const helmet = require('helmet');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -27,7 +27,7 @@ app.use(helmet({
   }));
 
   
-// CORS configuration - must be before other middleware
+// CORS configuration
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(sessionMiddleware);
 app.use(logSession);
 
-// Debug middleware to log requests (only in development)
+// Debug middleware to log requests
 if (process.env.NODE_ENV !== 'production') {
     app.use((req, res, next) => {
         console.log('Request Headers:', req.headers);
@@ -96,7 +96,7 @@ const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-// Graceful shutdown
+// shutdown
 process.on('SIGTERM', () => {
     console.info('SIGTERM signal received.');
     server.close(() => {

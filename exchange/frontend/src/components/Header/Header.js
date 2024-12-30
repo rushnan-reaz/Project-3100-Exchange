@@ -75,7 +75,7 @@ function Header() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search"
+              placeholder="Search by word or phrase"
             />
             <button type="submit">
               <SearchIcon className="SearchIcon" />

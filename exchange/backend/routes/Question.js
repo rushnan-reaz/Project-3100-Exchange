@@ -8,7 +8,7 @@ const CommentDB = require("../models/Comment");
 const AnswerDB = require("../models/Answer");
 const UserDB = require("../models/User");
 
-const authenticate = require("../middleware/authenticate"); // Add authentication middleware
+const authenticate = require("../middleware/authenticate");
 const sanitizeHtml = require('sanitize-html');
 
 const cleanEmptyTags = (html) => {
@@ -213,7 +213,7 @@ router.get("/:id", async (req, res) => {
       .populate("user", "_id username")
       .lean();
 
-    // Map comments to their respective answers
+    // Map comments to answers
     const answersWithComments = answers.map((answer) => ({
       ...answer,
       comments: comments.filter(

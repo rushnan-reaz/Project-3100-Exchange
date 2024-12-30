@@ -11,11 +11,11 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     // Check if the user has a valid session on initial load
     const checkAuthStatus = async () => {
       try {
-        // Make an API call to check the session status (your server-side session check)
+        // API call to check the session status 
         const response = await axios.get("/api/session", {
-          withCredentials: true, // Ensure cookies are included
+          withCredentials: true, // Ensure cookies 
         });
-        console.log('Session check response:', response); // Log the response
+        console.log('Session check response:', response); 
         if (response.status === 200) {
           setIsAuthenticated(true); // If session is valid, user is authenticated
         } else {
@@ -42,9 +42,9 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       {...rest}
       render={(props) =>
         isAuthenticated ? (
-          <Component {...props} /> // If authenticated, render the protected component
+          <Component {...props} /> // render the protected component
         ) : (
-          <Redirect to="/login" /> // If not authenticated, redirect to login page
+          <Redirect to="/login" /> //redirect to login page
         )
       }
     />

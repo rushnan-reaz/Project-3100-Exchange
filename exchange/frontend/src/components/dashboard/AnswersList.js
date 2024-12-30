@@ -26,7 +26,6 @@ function AnswersList({ userId, itemsPerPage, currentPage, onPageChange }) {
   if (loading) return <p>Loading...</p>;
   if (!answers.length) return <p>No answers found.</p>;
 
-  // Fix indexOfLastItem calculation
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = answers.slice(indexOfFirstItem, indexOfLastItem);

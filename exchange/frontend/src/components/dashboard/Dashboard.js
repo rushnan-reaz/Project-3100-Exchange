@@ -56,6 +56,11 @@ function Dashboard() {
     setItemsPerPage(value);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
+ 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1); 
+  };
 
   return (
     <div className="dashboard">
@@ -71,13 +76,13 @@ function Dashboard() {
         <div className="dashboard-nav">
           <button 
             className={activeTab === 'questions' ? 'active' : ''}
-            onClick={() => setActiveTab('questions')}
+            onClick={() => handleTabChange('questions')}
           >
             Questions
           </button>
           <button 
             className={activeTab === 'answers' ? 'active' : ''}
-            onClick={() => setActiveTab('answers')}
+            onClick={() => handleTabChange('answers')}
           >
             Answers
           </button>

@@ -191,6 +191,13 @@ Project 3100T Exchange is a web application designed to facilitate question and 
         |   |       ├── Index.css
         |   |       ├── Main.css
         |   |       └── Sidebar.css
+        |   ├── dashboard
+        |   |   ├── AnswersList.js
+        |   |   ├── QuestionList.js
+        |   |   ├── Dashboard.js
+        |   |   ├── pagination.js
+        |   |   ├── UserProfile.js
+        |   |   └── Dashboard.css
         |   |           
         |   ├── Header
         |   |   ├── Header.js
@@ -210,7 +217,10 @@ Project 3100T Exchange is a web application designed to facilitate question and 
         |   |           
         |   ├── Protected
         |   |   └── Protected.js
-        |   |       
+        |   | 
+        |   ├── ScrollTop
+        |   |   └── ScrollTop.js  
+        |   | 
         |   ├── Verified
         |   |   ├── VerErr.js
         |   |   ├── verification.js

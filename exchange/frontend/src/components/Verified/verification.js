@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom"; // Ensure this is from react-router-dom v5
+import { useHistory } from "react-router-dom"; 
 
 const VerifyEmail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const history = useHistory(); // Ensure history is defined
+  const history = useHistory(); 
   const token = new URLSearchParams(window.location.search).get("token");
 
   useEffect(() => {

@@ -76,7 +76,7 @@ router.get("/answers/:userId", authenticate, async (req, res) => {
     
     const answers = await AnswerDB.find({ user: req.params.userId })
       .populate({
-        path: "question_id",  // Changed from question to question_id
+        path: "question_id",
         select: "title description tag"
       })
       .populate("user", "_id username")
@@ -95,7 +95,7 @@ router.get("/answers/:userId", authenticate, async (req, res) => {
     // Map question_id to question for frontend consistency
     const mappedAnswers = answers.map(answer => ({
       ...answer,
-      question: answer.question_id  // Add question field for frontend
+      question: answer.question_id  
     }));
 
     console.log("Mapped answers:", mappedAnswers);
