@@ -9,44 +9,90 @@ const AnswerDB = require("../models/Answer");
 const UserDB = require("../models/User");
 
 const authenticate = require("../middleware/authenticate"); // Add authentication middleware
+const sanitizeHtml = require('sanitize-html');
+
+const cleanEmptyTags = (html) => {
+  if (!html) return '';
+  return html
+// Remove consecutive empty paragraphs with br at start and end
+.replace(/^(?:<p><br\s*\/?><\/p>)+|(?:<p><br\s*\/?><\/p>)+$/g, '')
+    
+// Limit consecutive br tags to maximum two
+.replace(/(?:<p><br\s*\/?><\/p>){3,}/g, '<p><br /></p><p><br /></p>')
+
+// Remove empty paragraphs with only &nbsp;
+.replace(/<p>\s*(?:&nbsp;|\u00A0)?\s*<\/p>/g, '')
+
+// Remove completely empty paragraphs
+.replace(/<p>\s*<\/p>/g, '')
+
+// Clean multiple spaces between tags
+.replace(/>\s+</g, '><')
+
+.trim();
+};
 
 // add question
 router.post("/", authenticate, async (req, res) => {
   try {
-    // Get userId from authenticated session
     const userId = req.session.userId;
 
-    console.log("userId", userId);
+    // console.log("Request body:", req.body.description);
 
-    if (!userId) {
-      return res.status(401).json({
+    // Clean and sanitize content
+    const sanitizedDescription = sanitizeHtml(req.body.description, {
+      allowedTags: [
+        'p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 
+        'code', 'pre', 'blockquote'
+      ],
+      allowedAttributes: {
+        'code': ['class'],
+        'pre': ['class']
+      },
+      // Keep line breaks and whitespace
+      allowProtocolRelative: false,
+      selfClosing: ['br'],
+      transformTags: {
+        'br': 'br'
+      }
+    });
+
+    // console.log("Sanitized description:", sanitizedDescription);
+
+    // Clean empty tags
+    const cleanedDescription = cleanEmptyTags(sanitizedDescription);
+
+    // console.log("Cleaned description:", cleanedDescription);
+
+    // Validate content
+    if (!cleanedDescription || cleanedDescription.replace(/<[^>]*>/g, '').trim().length < 30) {
+      return res.status(400).json({
         status: false,
-        message: "Authentication required",
+        message: "Description must contain meaningful content (min 30 chars)"
       });
     }
 
-    // Normalize tags
-    const normalizedTags = [
-      ...new Set(req.body.tag.map((tag) => tag.toLowerCase())),
-    ];
-
-    // Create question with authenticated user
     const questionData = new QuestionDB({
-      title: req.body.title,
-      description: req.body.description,
-      tag: normalizedTags,
-      user: userId, // Use authenticated userId
+      title: req.body.title.trim(),
+      description: cleanedDescription,
+      tag: req.body.tag.map(tag => tag.toLowerCase()),
+      user: userId
     });
-    console.log("questionData", questionData);
 
     const doc = await questionData.save();
-    res.status(201).json({ status: true, data: doc });
+    return res.status(201).json({ 
+      status: true, 
+      data: doc,
+      sanitizedLength: sanitizedDescription.length,
+      originalLength: req.body.description.length
+    });
+
   } catch (error) {
     console.error("Question creation error:", error);
-    res.status(500).json({
-      status: false,
-      message: "Error adding question",
-      errorDetails: error.message,
+    return res.status(500).json({
+      status: false, 
+      message: "Failed to create question",
+      error: error.message
     });
   }
 });

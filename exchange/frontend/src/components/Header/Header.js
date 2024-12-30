@@ -1,17 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import "./CSS/Header.css"; // Import the CSS file
+import React, { useState, useRef, useEffect, useContext } from "react";
+import "./CSS/Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import InboxIcon from "@mui/icons-material/Inbox";
 import { Avatar } from "@mui/material";
-import { Link } from "react-router-dom";
-// import TableRowsIcon from "@mui/icons-material/TableRows";
+import { Link, useHistory } from "react-router-dom";
 import logo_light from "./logo-no-background.png";
-// import logo_dark from "./logo_no_background_dark";
-// import DarkModeIcon from "@mui/icons-material/DarkMode";
-// import LightModeIcon from '@mui/icons-material/LightMode';
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useHistory } from "react-router-dom";
-import { useContext } from "react";
 import { AuthContext } from "../../context/authcontext.js";
 import { SearchContext } from "../../context/searchcontext.js";
 
@@ -23,7 +17,6 @@ function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const { setGlobalSearch, setForceRefresh } = useContext(SearchContext);
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -60,12 +53,10 @@ function Header() {
     }
   };
 
- 
-  
   const handleLogoClick = () => {
-    setSearchQuery(""); // Clear local search
-    setGlobalSearch(""); // Clear global search
-    setForceRefresh(true); // Force refresh
+    setSearchQuery("");
+    setGlobalSearch("");
+    setForceRefresh(true);
     history.replace("/");
   };
 
@@ -73,7 +64,7 @@ function Header() {
     <header className="Header">
       <div className="Header-container">
         <div className="header-left">
-        <Link to="/" onClick={handleLogoClick}>
+          <Link to="/" onClick={handleLogoClick}>
             <img className="logo" src={logo_light} alt="logo" />
           </Link>
         </div>
@@ -97,12 +88,11 @@ function Header() {
             <div className="header-right-container">
               <div className="user-menu-trigger" onClick={toggleMenu}>
                 <Avatar />
-                {/* <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar> */}
               </div>
 
               <div className={`user-menu ${show ? "show" : ""}`}>
                 <div className="user-info">
-                  <Link to="/profile" className="profile-link">
+                  <Link to="/dashboard" className="profile-link">
                     <div className="profile-content">
                       <Avatar>{user.username?.[0]?.toUpperCase()}</Avatar>
                       <span className="username">{user.username}</span>

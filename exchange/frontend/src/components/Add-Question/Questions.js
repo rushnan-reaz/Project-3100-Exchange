@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect} from "react";
+import React, { useContext, useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { TagsInput } from "react-tag-input-component";
@@ -8,10 +8,8 @@ import axios from "axios";
 import { AuthContext } from "../../context/authcontext";
 
 function Questions() {
-  const { user, isAuthenticated} = useContext(AuthContext);
+  const { user, isAuthenticated } = useContext(AuthContext);
   const history = useHistory();
-  
-  
 
   const [loading, setLoading] = useState(false);
   const [Question_title, setQuestion_title] = useState("");
@@ -19,18 +17,39 @@ function Questions() {
   const [Tags, setTags] = useState([]);
   const [error, setError] = useState("");
 
+  const cleanContent = (content) => {
+    if (!content) return "";
+
+    return (
+      content
+        // Remove all HTML tags except <br> and <p>
+        .replace(/(<br\s*\/?>\s*){3,}/g, "<br><br>")
+
+        // Remove all leading and trailing whitespaces
+        .replace(/<p>\s*(?:&nbsp;|\u00A0)?\s*<\/p>/g, "")
+
+        // Remove all leading and trailing whitespaces
+        .replace(/^\s+|\s+$/g, "")
+        // Remove all leading and trailing whitespaces
+        .replace(/>\s+</g, "><")
+
+        .trim()
+    );
+  };
+
   useEffect(() => {
-    console.log('History object:', history);
-    console.log('Auth state:', { user, isAuthenticated });
+    console.log("History object:", history);
+    console.log("Auth state:", { user, isAuthenticated });
 
     if (!loading && !isAuthenticated) {
       console.log("User not authenticated, redirecting...");
-      history.push('/login');
+      history.push("/login");
     }
   }, [user, isAuthenticated, loading, history]);
 
   const handleQuillchange = (value) => {
-    setQuestion_description(value);
+    const cleanedValue = cleanContent(value);
+    setQuestion_description(cleanedValue);
   };
 
   // Constants for validation
@@ -57,7 +76,9 @@ function Questions() {
     }
 
     if (Question_description.length < MIN_DESCRIPTION_LENGTH) {
-      setError(`Description must be at least ${MIN_DESCRIPTION_LENGTH} characters`);
+      setError(
+        `Description must be at least ${MIN_DESCRIPTION_LENGTH} characters`
+      );
       return false;
     }
 
@@ -73,13 +94,20 @@ function Questions() {
     e.preventDefault();
     setError("");
 
-   
-
     // if (!user) {
     //   setError("Please login to post a question");
-    //   history.push("/login"); 
+    //   history.push("/login");
     //   return;
     // }
+
+    const cleanedDescription = cleanContent(Question_description);
+
+    if (cleanedDescription.length < MIN_DESCRIPTION_LENGTH) {
+      setError(
+        `Description must contain at least ${MIN_DESCRIPTION_LENGTH} meaningful characters`
+      );
+      return;
+    }
 
     if (!validateForm()) {
       return;
@@ -88,13 +116,20 @@ function Questions() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/question", {
-        title: Question_title.trim(),
-        description: Question_description,
-        tag: Tags.length > 0 ? Tags.map(tag => tag.toLowerCase()) : ["untagged"],
-      }, {
-        withCredentials: true
-      });
+      const response = await axios.post(
+        "/api/question",
+        {
+          title: Question_title.trim(),
+          description: cleanedDescription,
+          tag:
+            Tags.length > 0
+              ? Tags.map((tag) => tag.toLowerCase())
+              : ["untagged"],
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       console.log("Question posted:", response.data);
       console.log("Question posted:/question?q=", response.data.data._id);
@@ -102,14 +137,16 @@ function Questions() {
 
       if (response.data.status) {
         resetForm();
-        if (window.confirm("Question posted successfully! View your question?")) {
+        if (
+          window.confirm("Question posted successfully! View your question?")
+        ) {
           // history.push(`/question?q=${response.data.data._id}`);
           // history.push(`/`);
           window.location.href = `/question?q=${response.data.data._id}`;
         } else {
           window.alert(" Question not posted successfully");
           // history.push("/add-question");
-          window.location.href = '/';
+          window.location.href = "/";
         }
       }
     } catch (error) {
@@ -121,9 +158,9 @@ function Questions() {
   };
 
   const handleTagChange = (tags) => {
-    const lowerCaseTags = tags.map(tag => tag.toLowerCase());
+    const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
     const uniqueTags = [...new Set(lowerCaseTags)];
-    
+
     if (uniqueTags.length !== tags.length) {
       setError("Duplicate tags are not allowed!");
       return;
@@ -150,7 +187,10 @@ function Questions() {
             <div className="options">
               <div className="title">
                 <h2>Question Title</h2>
-                <small>Be specific and imagine you're asking a question to another person. Maximum {MAX_TITLE_LENGTH} characters.</small>
+                <small>
+                  Be specific and imagine you're asking a question to another
+                  person. Maximum {MAX_TITLE_LENGTH} characters.
+                </small>
                 <input
                   value={Question_title}
                   onChange={(e) => setQuestion_title(e.target.value)}
@@ -159,18 +199,24 @@ function Questions() {
                   maxLength={MAX_TITLE_LENGTH}
                   required
                 />
-                <small>{Question_title.length}/{MAX_TITLE_LENGTH}</small>
+                <small>
+                  {Question_title.length}/{MAX_TITLE_LENGTH}
+                </small>
               </div>
             </div>
             <div className="options">
               <div className="title">
                 <h2>Question Description</h2>
-                <small>Include all the information someone would need to answer your question. Minimum {MIN_DESCRIPTION_LENGTH} characters.</small>
+                <small>
+                  Include all the information someone would need to answer your
+                  question. Minimum {MIN_DESCRIPTION_LENGTH} characters.
+                </small>
                 <ReactQuill
                   value={Question_description}
                   onChange={handleQuillchange}
                   className="react-quill"
                   theme="snow"
+                  placeholder="Enter your question here. Please avoid unnecessary space and tabs."
                 />
                 <small>{Question_description.length} characters</small>
               </div>
@@ -178,7 +224,10 @@ function Questions() {
             <div className="options">
               <div className="title">
                 <h2>Tags</h2>
-                <small>Add up to {MAX_TAGS} tags to describe what your question is about</small>
+                <small>
+                  Add up to {MAX_TAGS} tags to describe what your question is
+                  about
+                </small>
                 <TagsInput
                   value={Tags}
                   onChange={handleTagChange}
@@ -186,7 +235,9 @@ function Questions() {
                   placeHolder="Press Enter to add Tags"
                   maxTags={MAX_TAGS}
                 />
-                <small>{Tags.length}/{MAX_TAGS} tags used</small>
+                <small>
+                  {Tags.length}/{MAX_TAGS} tags used
+                </small>
               </div>
             </div>
           </div>
@@ -195,7 +246,8 @@ function Questions() {
           disabled={loading}
           type="submit"
           onClick={handleSubmit}
-          className="btn">
+          className="btn"
+        >
           {loading ? "Posting..." : "Post Question"}
         </button>
       </div>

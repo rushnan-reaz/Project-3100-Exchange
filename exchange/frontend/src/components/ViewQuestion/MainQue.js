@@ -295,7 +295,7 @@ function MainQue() {
         <div className="main-top">
           <h2 className="main-question">{questiondata?.title}</h2>
           <Link to="/add-question" className="main-ask">
-            <button>Ask Question</button>
+            <button className="ask-button">Ask Question</button>
           </Link>
         </div>
 

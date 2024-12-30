@@ -39,6 +39,7 @@
     margin-bottom: 5px;
     color: rgba(0,0,0,0.6);
     font-size: small;
+    /* background-color: aqua; */
 }
 /* Styling for the individual stat option*/
 .all-option{
@@ -46,6 +47,8 @@
     flex-direction: column;
     align-items: center;
     margin-bottom: 5px;
+    /* background-color: #007cd4; */
+    padding: 0px 10px 0px 10px;
 }
 
 .all-option p{
@@ -102,6 +105,7 @@
 .author small{
     color: rgba(0,0,0,0.7);
     margin-bottom: 5px;
+    
 }
 /* Author info with avatar */
 .author-info {
@@ -135,3 +139,6 @@
     /* background-color: aqua; */
   }
 
+  .all-option span, .all-option small {
+    white-space: nowrap; 
+}

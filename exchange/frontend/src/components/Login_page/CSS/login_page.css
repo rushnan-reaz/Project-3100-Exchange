@@ -67,7 +67,8 @@
   }
   
   button:hover {
-    background-color: #007acc;
+    background-color: none;
+    
   }
   
   .toggle-form {

@@ -1,49 +1,45 @@
 const express = require('express');
 const router = express.Router();
 
-// Importing individual route handlers
+// Import route handlers
 const QuestionRouter = require('./Question');
 const AnswerRouter = require('./Answer');
 const CommentRouter = require('./Comment');
 const RegisterRouter = require('./UserReg');
 const LoginRouter = require('./Userlogin');
 const VerifyEmailRouter = require('./Verify_email');
-const LogoutRoute = require('./Userlogout');
+const LogoutRouter = require('./Userlogout');
+const UserdataRouter = require('./userdata');
 
-// Middleware imports
-const authenticate = require('../middleware/authenticate'); // Authentication middleware
+// Import middleware
+const authenticate = require('../middleware/authenticate');
 const getUserData = require('../helper/Fetchuser');
 
-// Home route or base API route
+// Base routes
 router.get('/', (req, res) => {
     res.send('Welcome to the backend API');
 });
 
+// API routes
+router.use('/question', QuestionRouter);
+router.use('/answer', AnswerRouter);
+router.use('/comment', CommentRouter);
+router.use('/register', RegisterRouter);
+router.use('/login', LoginRouter);
+router.use('/verify-email', VerifyEmailRouter);
+router.use('/logout', LogoutRouter);
+router.use('/userdata', UserdataRouter);
 
-router.use('/question', QuestionRouter);  // Route for handling questions
-router.use('/answer', AnswerRouter);      // Route for handling answers
-router.use('/comment', CommentRouter);    // Route for handling comments
-
-
-router.use('/register', RegisterRouter);  // Route for user registration
-router.use('/login', LoginRouter);        // Route for user login
-router.use('/verify-email', VerifyEmailRouter); // Email verification route
-router.use('/logout', LogoutRoute);       // Logout route
-
-// ** Protected Routes (Authentication required) **
-// User-related route with authentication
+// Protected routes
 router.get('/user', authenticate, getUserData);
-
-// Session route to check if user is logged in
 router.get('/session', authenticate, (req, res) => {
-    // Session data
     res.json({
         message: 'User is logged in',
-        userId: req.userId, // Send the authenticated user's ID
+        userId: req.userId
     });
 });
 
-// Catch-all route for undefined routes
+// 404 handler
 router.use('*', (req, res) => {
     res.status(404).send('API route not found');
 });

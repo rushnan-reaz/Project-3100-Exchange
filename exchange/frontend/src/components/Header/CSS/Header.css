@@ -151,12 +151,15 @@
 }
 
 .user-info {
-    padding: 12px 16px;
+    padding: 14px 16px;
     border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .user-info:hover {
     background-color: rgba(0,0,0,0.04);
+    /* background-color: red; */
+    transform: scale(1.02);
 }
 
 .profile-link {
@@ -176,7 +179,7 @@
 }
 
 .profile-content:hover {
-    background-color: rgba(0,0,0,0.04);
+    /* background-color: rgba(0,0,0,0.04); */
 }
 
 .username {

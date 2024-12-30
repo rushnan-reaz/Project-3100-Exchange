@@ -8,8 +8,10 @@ import Login from "./components/Login_page/login_page.js"; // Fix naming convent
 import VerifiedPage from "./components/Verified/Verified.js";
 import VerificationFailedPage from "./components/Verified/VerErr.js";
 import VerifyEmail from "./components/Verified/verification.js";
+import Dashboard from "./components/dashboard/Dashboard.js";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import ScrollToTop from "./components/ScrollTop/ScrollTop.js";
 import { AuthProvider } from "./context/authcontext.js";
 import { SearchProvider } from "./context/searchcontext.js";
 import ProtectedRoute from "./components/Protected/Protected.js";
@@ -17,27 +19,32 @@ import ProtectedRoute from "./components/Protected/Protected.js";
 function App() {
   return (
     <Router>
+      <ScrollToTop /> 
       <SearchProvider>
-      <AuthProvider>
-        <div className="App">
-          <Header />
-          <Switch>
-            {/* Public Routes */}
-            <Route path="/verify-email" component={VerifyEmail} />
-            <Route path="/verification-failed" component={VerificationFailedPage} />
-            <Route path="/verified" component={VerifiedPage} />
-            <Route exact path="/login" component={Login} />
+        <AuthProvider>
+          <div className="App">
+            <Header />
+            <Switch>
+              {/* Public Routes */}
+              <Route path="/verify-email" component={VerifyEmail} />
+              <Route
+                path="/verification-failed"
+                component={VerificationFailedPage}
+              />
+              <Route path="/verified" component={VerifiedPage} />
+              <Route exact path="/login" component={Login} />
 
-            {/* Protected Routes */}
-            <ProtectedRoute exact path="/" component={Body_components} />
-            <ProtectedRoute exact path="/add-question" component={Question} />
-            <ProtectedRoute exact path="/question" component={ViewQuestion} />
-            
-            {/* 404 Route */}
-            <Route path="*" render={() => <div>Page not found</div>} />
-          </Switch>
-        </div>
-      </AuthProvider>
+              {/* Protected Routes */}
+              <ProtectedRoute exact path="/" component={Body_components} />
+              <ProtectedRoute exact path="/add-question" component={Question} />
+              <ProtectedRoute exact path="/question" component={ViewQuestion} />
+              <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+
+              {/* 404 Route */}
+              <Route path="*" render={() => <div>Page not found</div>} />
+            </Switch>
+          </div>
+        </AuthProvider>
       </SearchProvider>
     </Router>
   );
